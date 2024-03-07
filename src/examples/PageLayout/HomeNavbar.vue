@@ -19,7 +19,7 @@ defineProps({
   <!-- Navbar -->
   <nav
     class="navbar navbar-expand-lg top-0 z-index-3 position-absolute mt-4"
-    :class="isBlur ? isBlur : 'shadow-none my-2 navbar-transparent w-100'"
+    :class="isBlur ? isBlur : 'shadow-none my-2 navbar-transparent'" style="position: sticky; top: 0; z-index: 100;"
   >
     <div class="container ps-2 pe-0">
       <router-link
@@ -80,5 +80,4 @@ defineProps({
       </div>
     </div>
   </nav>
-  <!-- End Navbar -->
 </template>

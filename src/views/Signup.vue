@@ -48,7 +48,7 @@ onBeforeUnmount(() => {
           <div class="col-auto text-left mb-5">
             <h1 class="text-white mb-2 mt-2">Register</h1>
             <p class="text-lead text-white">
-              Silahkan membuat akun terlebih dahulu untuk mengakses <br> Website Manajemen Usul Pesan!
+              Silahkan membuat akun terlebih dahulu untuk mengakses <br> YaDipinjam!
             </p>
           </div>
         </div>

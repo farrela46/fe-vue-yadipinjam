@@ -35,7 +35,7 @@ onBeforeUnmount(() => {
     </div>
   </div>
   <main class="main-content mt-0">
-   
+
     <div class="mx-3 mt-2 position-relative" :style="{
           backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ) ,url(' + require('@/assets/img/library.png') + ')',
           backgroundSize: 'cover',
@@ -48,7 +48,7 @@ onBeforeUnmount(() => {
           <div class="col-auto text-left mb-5">
             <h1 class="text-white mb-2 mt-2">Login</h1>
             <p class="text-lead text-white">
-              Silahkan login terlebih dahulu untuk mengakses <br> Website Manajemen Usul Pesan!
+              Silahkan login terlebih dahulu untuk mengakses <br> YaDipinjam!
             </p>
           </div>
         </div>

@@ -6,13 +6,23 @@ import AppFooter from "@/examples/Footer.vue";
 // import Navbar from "@/examples/Navbars/HomeNavbar.vue";
 import Navbar from "@/examples/PageLayout/HomeNavbar.vue";
 import setTooltip from "@/assets/js/tooltip.js";
+import Typed from 'typed.js';
 
 const body = document.getElementsByTagName("body")[0];
 
 const store = useStore();
 
-// const sidebarMinimize = () => store.commit("sidebarMinimize");
-// const toggleConfigurator = () => store.commit("toggleConfigurator");
+document.addEventListener('DOMContentLoaded', function () {
+  const typedStrings = document.getElementById('typed-strings').getElementsByTagName('h1');
+  const typedOptions = {
+    strings: Array.from(typedStrings).map(el => el.innerText),
+    typeSpeed: 100,
+    backSpeed: 50,
+    loop: true
+  };
+
+  new Typed('#typed', typedOptions);
+});
 
 onMounted(() => {
   setTooltip();
@@ -31,14 +41,6 @@ onBeforeUnmount(() => {
   store.state.showNavbar = true;
   store.state.showSidenav = true;
   store.state.showFooter = true;
-  body.classList.remove("virtual-reality");
-
-  if (store.state.isPinned === false) {
-    const sidenav_show = document.querySelector(".g-sidenav-show");
-    sidenav_show.classList.remove("g-sidenav-hidden");
-    sidenav_show.classList.add("g-sidenav-pinned");
-    store.state.isPinned = true;
-  }
   store.state.isTransparent = "bg-transparent";
 });
 </script>
@@ -51,7 +53,6 @@ onBeforeUnmount(() => {
       </div>
     </div>
   </div>
-  <!-- Header Section -->
   <div class="mx-3 mt-2 position-relative" :style="{
           backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ) ,url(' + require('@/assets/img/library.png') + ')',
           backgroundSize: 'cover',
@@ -98,85 +99,191 @@ onBeforeUnmount(() => {
         </div>
       </div>
       <br>
-      <div class="mx-3 mt-4 position-relative mb-5" :style="{
+      <div class="mx-3 mt-4 mb-5" :style="{
           backgroundColor: 'white',
-          backgroundSize: 'cover',
           backgroundPosition: 'center',
-          borderRadius: '30px 30px 0 0'
+          borderRadius: '30px 30px 30px 30px'
         }">
-        <div class="container-fluid h-200">
-          <div class="row h-100 justify-content-center align-items-center m-5">
-            <div class="col-auto text-center m-5">
-              <h1 class="text-dark mb-4">Apa Itu YaDipinjam ?</h1>
-              <p class="lead"> YaDipinjam merupakan aplikasi perpustakaan kolektif berbasis web yang dirancang
-                untuk
-                memfasilitasi pinjam-meminjam buku antar pelanggan. Platform ini memungkinkan pelanggan
-                untuk meminjamkan buku milik mereka kepada pelanggan lain dan juga meminjam buku dari
-                koleksi pelanggan lain. </p>
-            </div>
-            <section class="py-7">
-              <div class="container">
-                <div class="row align-items-center">
-                  <div class="col-lg-6">
-                    <div class="row justify-content-start">
-                      <div class="col-md-6">
-                        <div color="info" class="info">
-                          <span style="font-size: 3rem;">
-                            <span style="color: green;">
-                              <i class="fas fa-globe"></i>
-                            </span>
-                          </span>
-                          <h5 class="font-weight-bolder mt-3">Fully integrated</h5>
-                          <p class="pe-5">We get insulted by others, lose trust for those We get back
-                            freezes</p>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div color="info" class="info"><i
-                            class="material-icons text-gradient text-success text-3xl">payments</i><!---->
-                          <h5 class="font-weight-bolder mt-3">Payments functionality</h5>
-                          <p class="pe-5">We get insulted by others, lose trust for those We get back
-                            freezes</p>
-                        </div>
-                      </div>
+        <div class="row h-100 justify-content-center align-items-center m-5">
+          <div class="col-auto text-center m-2">
+            <h1 class="text-dark mb-4 mt-5">Apa Itu YaDipinjam ?</h1>
+            <p class="lead"> YaDipinjam merupakan aplikasi perpustakaan kolektif berbasis web yang dirancang
+              untuk
+              memfasilitasi pinjam-meminjam buku antar pelanggan. Platform ini memungkinkan pelanggan
+              untuk meminjamkan buku milik mereka kepada pelanggan lain dan juga meminjam buku dari
+              koleksi pelanggan lain. </p>
+          </div>
+          <section class="py-5 ">
+            <div class="row align-items-center">
+              <div class="col-md-12">
+                <div class="row justify-content-start">
+                  <div class="col-md-6">
+                    <div color="info" class="info">
+                      <span style="font-size: 3rem;">
+                        <span style="color: green;">
+                          <i class="fas fa-globe"></i>
+                        </span>
+                      </span>
+                      <h5 class="font-weight-bolder mt-3">Daerah</h5>
+                      <p class="pe-5">Daerah layanan kami meliputi Surabaya hingga Afrika</p>
                     </div>
-                    <div class="row justify-content-start mt-4">
-                      <div class="col-md-6">
-                        <div color="info" class="info"><i
-                            class="material-icons text-gradient text-success text-3xl">apps</i><!---->
-                          <h5 class="font-weight-bolder mt-3">Prebuilt components</h5>
-                          <p class="pe-5">We get insulted by others, lose trust for those We get back
-                            freezes</p>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div color="info" class="info"><i
-                            class="material-icons text-gradient text-success text-3xl">3p</i><!---->
-                          <h5 class="font-weight-bolder mt-3">Improved platform</h5>
-                          <p class="pe-5">We get insulted by others, lose trust for those We get back
-                            freezes</p>
+                  </div>
+                  <div class="col-md-6">
+                    <div color="info" class="info"><span style="font-size: 3rem;">
+                        <span style="color: green;">
+                          <i class="fa fa-money"></i>
+                        </span>
+                      </span>
+                      <h5 class="font-weight-bolder mt-3">Sistem Deposit</h5>
+                      <p class="pe-5">Penerapan sistem deposit guna meningkatkan trust point dalam melakukan
+                        pinjam-meminjam</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row justify-content-start mt-4">
+                  <div class="col-md-6">
+                    <div color="info" class="info">
+                      <span style="font-size: 3rem;">
+                        <span style="color: green;">
+                          <i class="fa fa-hand-peace-o"></i>
+                        </span>
+                      </span>
+                      <h5 class="font-weight-bolder mt-3">Kemudahan</h5>
+                      <p class="pe-5">Kemudahan dalam melakukan peminjaman dalam website kami.</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div color="info" class="info">
+                      <span style="font-size: 3rem;">
+                        <span style="color: green;">
+                          <i class="fa fa-lock"></i>
+                        </span>
+                      </span>
+                      <h5 class="font-weight-bolder mt-3">Keamanan</h5>
+                      <p class="pe-5">Kami akan mengusahakan data pengguna aman pada kami (semoga wkwk)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <hr class="my-5">
+          <section class="py-5 mb-5">
+            <div class="row align-items-center">
+              <div class="col-md-6 d-flex justify-content-center align-items-center">
+                <div class="row">
+                  <div class="col m-3">
+                    <h2 class="font-weight-normal">Buku adalah jendela Dunia!</h2>
+                    <p style="font-size: 18px;">Dengan membaca buku, kita bisa mendapatkan beragam pengetahuan yang
+                      belum kita
+                      ketahui. Sehingga wawasan kita kian bertambah.
+                    </p>
+                    <button type="button" class="btn btn-sm mb-0 mt-3 bg-gradient-success">Pinjam Sekarang!</button>
+                    <router-link to="/faq" class="text-dark font-weight-bolder"> <button type="button"
+                        class="btn btn-sm mb-0 mt-3 mx-3 bg-gradient-info">Cara Peminjaman!</button></router-link>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mt-6 d-flex justify-content-center align-items-center">
+                <div class="card">
+                  <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2"><a
+                      class="d-block blur-shadow-image"><img
+                        src="https://feedback.minecraft.net/hc/user_images/RU2A2xA0BE8LK3zqkYnmdw.jpeg"
+                        alt="Steve Reading Book" class="img-fluid border-radius-lg"></a></div>
+                  <div class="card-body text-center">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="py-5 mt-5 bg-gradient-dark mb-4" style="border-radius: 30px;">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-8 text-start mb-5 mt-5">
+                  <h2 class="text-white"> YadiDevelop Team, kami <span class="text-white" id="typed"></span></h2>
+                  <div id="typed-strings" style="display: none;">
+                    <h1>Lambat</h1>
+                    <h1>Jelek</h1>
+                    <h1>Mahal</h1>
+                  </div>
+                  <p class="text-white opacity-8 mb-0"> Persetan dengan hasil bagus, tugas kelar adalah objektif kami.
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 col-12">
+                  <div class="card card-profile mt-4">
+                    <div class="row">
+                      <div class="col-lg-4 col-md-6 col-12 mt-n5"><a href="javascript:;">
+                          <div class="p-3 pe-md-0"><img class="w-100 border-radius-md shadow-lg"
+                              :src="require('@/assets/img/analyst-1.png')" alt="Emma Roberts"></div>
+                        </a></div>
+                      <div class="col-lg-8 col-md-6 col-12 my-auto">
+                        <div class="card-body ps-lg-0">
+                          <h5 class="mb-0">Sembiring 'Enzo' Laridho</h5>
+                          <h6 class="text-success">System Analyst</h6>
+                          <p class="mb-0">YaDikerjain aja</p>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div class="col-lg-4 ms-auto mt-lg-0 mt-6">
-                    <div class="card">
-                      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2"><a
-                          class="d-block blur-shadow-image"><img
-                            src="https://images.unsplash.com/photo-1544717302-de2939b7ef71?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1950&amp;q=80"
-                            alt="Get insights on Search" class="img-fluid border-radius-lg"></a></div>
-                      <div class="card-body text-center">
-                        <h5 class="font-weight-normal"><a href="javascript:;">Get insights on Search</a></h5>
-                        <p class="mb-0">Website visitors today demand a frictionless user expericence — especially when
-                          using search. Because of the hight standards.</p><button type="button"
-                          class="btn btn-sm mb-0 mt-3 bg-gradient-success">Find Out More</button>
+                </div>
+                <div class="col-lg-6 col-12">
+                  <div class="card card-profile mt-lg-4 mt-5">
+                    <div class="row">
+                      <div class="col-lg-4 col-md-6 col-12 mt-n5"><a href="javascript:;">
+                          <div class="p-3 pe-md-0"><img class="w-100 border-radius-md shadow-lg"
+                              :src="require('@/assets/img/ui-1.png')" alt="William Pearce"></div>
+                        </a></div>
+                      <div class="col-lg-8 col-md-6 col-12 my-auto">
+                        <div class="card-body ps-lg-0">
+                          <h5 class="mb-0">Desyalwa 'Najah' Yuga</h5>
+                          <h6 class="text-success">UI Designer</h6>
+                          <p class="mb-0">Atek quotes barang?</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </section>
-          </div>
+              <div class="row mt-4">
+                <div class="col-lg-6 col-12">
+                  <div class="card card-profile mt-4 z-index-2">
+                    <div class="row">
+                      <div class="col-lg-4 col-md-6 col-12 mt-n5"><a href="javascript:;">
+                          <div class="p-3 pe-md-0"><img class="w-100 border-radius-md shadow-lg"
+                              :src="require('@/assets/img/fe-1.png')" alt="Ivana Flow"></div>
+                        </a></div>
+                      <div class="col-lg-8 col-md-6 col-12 my-auto">
+                        <div class="card-body ps-lg-0">
+                          <h5 class="mb-0">Darmawan 'Farrel' Ahmad</h5>
+                          <h6 class="text-success">Frontend Developer</h6>
+                          <p class="mb-0">Comot sana comot sini yg penting kelar.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 col-12">
+                  <div class="card card-profile mt-lg-4 mt-5 z-index-2">
+                    <div class="row">
+                      <div class="col-lg-4 col-md-6 col-12 mt-n5"><a href="javascript:;">
+                          <div class="p-3 pe-md-0"><img class="w-100 border-radius-md shadow-lg"
+                              :src="require('@/assets/img/be-1.png')" alt="Marquez Garcia"></div>
+                        </a></div>
+                      <div class="col-lg-8 col-md-6 col-12 my-auto">
+                        <div class="card-body ps-lg-0">
+                          <h5 class="mb-0">Abdullah 'Yasfa' Ainun</h5>
+                          <h6 class="text-success">Backend Developer</h6>
+                          <p class="mb-0">Alhamdulillah</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
       <!-- <div class="container-fluid mt-2 bg-white">
