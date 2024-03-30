@@ -1,29 +1,98 @@
-<script setup>
-import { onBeforeUnmount, onBeforeMount } from "vue";
-import { useStore } from "vuex";
-
+<script>
+import axios from "axios";
+import BASE_URL from '@/api/config-api';
 import Navbar from "@/examples/PageLayout/HomeNavbar.vue";
 import AppFooter from "@/examples/PageLayout/Footer.vue";
 import ArgonInput from "@/components/ArgonInput.vue";
-import ArgonCheckbox from "@/components/ArgonCheckbox.vue";
+// import ArgonCheckbox from "@/components/ArgonCheckbox.vue";
 import ArgonButton from "@/components/ArgonButton.vue";
-const body = document.getElementsByTagName("body")[0];
 
-const store = useStore();
-onBeforeMount(() => {
-  store.state.hideConfigButton = true;
-  store.state.showNavbar = false;
-  store.state.showSidenav = false;
-  store.state.showFooter = false;
-  body.classList.remove("bg-gray-100");
-});
-onBeforeUnmount(() => {
-  store.state.hideConfigButton = false;
-  store.state.showNavbar = true;
-  store.state.showSidenav = true;
-  store.state.showFooter = true;
-  body.classList.add("bg-gray-100");
-});
+export default {
+  name: 'LoginPage',
+  components: {
+    Navbar,
+    AppFooter,
+    ArgonInput,
+    // ArgonCheckbox,
+    ArgonButton
+  },
+  data() {
+    return {
+      username: '',
+      password: '',
+      store: null,
+      body: null,
+      loading: false
+    };
+  },
+  created() {
+    this.store = this.$store;
+    this.body = document.getElementsByTagName("body")[0];
+    this.setupPage();
+  },
+  beforeUnmount() {
+    this.restorePage();
+  },
+  methods: {
+    async onSubmit() {
+      this.loading = true;
+      try {
+        console.log("test")
+        const response = await axios.post(`${BASE_URL}/auth/login`, {
+          email: this.username,
+          password: this.password
+        });
+
+        this.$notify({
+          type: 'success',
+          title: 'Success',
+          text: response.data.message,
+          color: 'green'
+        });
+
+        const { role } = response.data;
+
+        if (role === 'admin') {
+          localStorage.setItem('access_token', response.data.access_token);
+          this.$router.push('/admin/dashboard');
+        } else if (role === 'user') {
+          localStorage.setItem('access_token', response.data.access_token);
+          this.$router.push('/dashboard');
+        }
+      } catch (error) {
+        console.error(error);
+
+        if (error.response && error.response.data.message) {
+          const errorMessage = error.response.data.message;
+          this.$notify({
+            type: 'error',
+            title: 'Error',
+            text: errorMessage,
+            color: 'red'
+          });
+        }
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    setupPage() {
+      this.store.state.hideConfigButton = true;
+      this.store.state.showNavbar = false;
+      this.store.state.showSidenav = false;
+      this.store.state.showFooter = false;
+      this.body.classList.remove("bg-gray-100");
+    },
+    restorePage() {
+      this.store.state.hideConfigButton = false;
+      this.store.state.showNavbar = true;
+      this.store.state.showSidenav = true;
+      this.store.state.showFooter = true;
+      this.body.classList.add("bg-gray-100");
+    }
+  }
+}
+
 </script>
 
 <template>
@@ -62,9 +131,10 @@ onBeforeUnmount(() => {
               <h5>Login</h5>
             </div>
             <div class="card-body">
-              <form role="form">
-                <argon-input id="email" type="email" placeholder="Email" aria-label="Email" />
-                <argon-input id="password" type="password" placeholder="Password" aria-label="Password" />
+              <form role="form"  @submit.prevent="onSubmit">
+                <argon-input v-model="username" id="email" type="email" placeholder="Email" aria-label="Email" />
+                <argon-input v-model="password" id="password" type="password" placeholder="Password"
+                  aria-label="Password" />
                 <argon-checkbox checked>
                   <label class="form-check-label" for="flexCheckDefault">
                     I agree the
@@ -72,7 +142,10 @@ onBeforeUnmount(() => {
                   </label>
                 </argon-checkbox>
                 <div class="text-center">
-                  <argon-button fullWidth color="dark" variant="gradient" class="my-4 mb-2">Sign up</argon-button>
+                  <argon-button v-if="!loading" fullWidth color="dark" type="submit" variant="gradient"
+                    class="my-4 mb-2">Login</argon-button>
+                  <argon-button v-else fullWidth color="dark" variant="gradient" class="my-4 mb-2"
+                    disabled><v-progress-circular indeterminate></v-progress-circular></argon-button>
                 </div>
                 <p class="text-sm mt-3 mb-0">
                   Tidak punya akun?

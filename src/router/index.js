@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Dashboard from "../views/Dashboard.vue";
+import DashboardDefault from "../views/Dashboard.vue";
 import Tables from "../views/Tables.vue";
 import Billing from "../views/Billing.vue";
 import VirtualReality from "../views/VirtualReality.vue";
@@ -7,8 +7,13 @@ import RTL from "../views/Rtl.vue";
 import Profile from "../views/Profile.vue";
 import Signup from "../views/Signup.vue";
 import LandingPage from "../views/LandingPage.vue";
+import Dashboard from "../views/admin/Dashboard.vue";
+import ManageUsers from "../views/admin/ManageUsers.vue";
 import Login from "../views/Loginn.vue";
 import Signin from "../views/Signin.vue";
+
+//USER
+import UserDashboard from "../views/user/Dashboard.vue";
 
 const routes = [
   {
@@ -31,10 +36,27 @@ const routes = [
     name: "Login",
     component: Login,
   },
+  //USER
+  {
+    path: "/dashboard",
+    name: "UserDashboard",
+    component: UserDashboard,
+  },
+
+  {
+    path: "/admin/dashboard",
+    name: "Dashboard",
+    component: Dashboard,
+  },
+  {
+    path: "/admin/manageusers",
+    name: "Manage Users",
+    component: ManageUsers,
+  },
   {
     path: "/dashboard-default",
     name: "Dashboard",
-    component: Dashboard,
+    component: DashboardDefault,
   },
   {
     path: "/tables",
