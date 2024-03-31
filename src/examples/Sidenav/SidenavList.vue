@@ -1,164 +1,115 @@
-<script setup>
-import { computed } from "vue";
+<script>
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
-
 import SidenavItem from "./SidenavItem.vue";
-import SidenavCard from "./SidenavCard.vue";
+import axios from "axios";
+import BASE_URL from '@/api/config-api';
 
-const store = useStore();
-const isRTL = computed(() => store.state.isRTL);
+export default {
+  components: {
+    SidenavItem
+  },
+  data() {
+    return {
+      userRole: ''
+    };
+  },
+  mounted() {
+    this.getUser()
+  },
+  methods: {
+    getRoute() {
+      const route = useRoute();
+      const routeArr = route.path.split("/");
+      return routeArr[1];
+    },
+    async getUser() {
+      try {
+        const response = await axios.get(`${BASE_URL}/user`, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem('access_token')
+          }
+        });
+        this.username = response.data.name;
+        this.userRole = response.data.role;
+      } catch (error) {
+        console.error(error);
 
-const getRoute = () => {
-  const route = useRoute();
-  const routeArr = route.path.split("/");
-  return routeArr[1];
+        if (error.response && error.response.data.message) {
+          const errorMessage = error.response.data.message;
+          console.log(errorMessage)
+        }
+      }
+    }
+  },
 };
 </script>
+
+
 <template>
-  <div
-    class="collapse navbar-collapse w-auto h-auto h-100"
-    id="sidenav-collapse-main"
-  >
+  <div class="collapse navbar-collapse w-auto h-auto h-100" id="sidenav-collapse-main">
     <ul class="navbar-nav">
-      <li class="nav-item">
-        <sidenav-item
-          to="/dashboard-default"
-          :class="getRoute() === 'dashboard-default' ? 'active' : ''"
-          :navText="isRTL ? 'لوحة القيادة' : 'Dashboard'"
-        >
+      <li v-if="userRole === 'admin'" class="nav-item">
+        <sidenav-item to="/admin/dashboard" :class="getRoute() === 'dashboard' ? 'active' : ''" navText="Dashboard">
           <template v-slot:icon>
             <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
           </template>
         </sidenav-item>
       </li>
-
-      <li class="nav-item">
-        <sidenav-item
-          to="/tables"
-          :class="getRoute() === 'tables' ? 'active' : ''"
-          :navText="isRTL ? 'الجداول' : 'Tables'"
-        >
+      <li v-if="userRole === 'admin'" class="nav-item">
+        <sidenav-item to="/admin/manageproducts" :class="getRoute() === 'manage products' ? 'active' : ''" navText="Manage Products">
           <template v-slot:icon>
-            <i
-              class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"
-            ></i>
+            <i class="fa fa-book text-success text-sm opacity-10"></i>
           </template>
         </sidenav-item>
       </li>
+      <li v-if="userRole === 'admin'" class="nav-item">
+        <sidenav-item to="/admin/manageusers" :class="getRoute() === 'manage users' ? 'active' : ''" navText="Manage Users">
+          <template v-slot:icon>
+            <i class="fas fa-users text-success text-sm opacity-10"></i>
+          </template>
+        </sidenav-item>
+      </li>
+      <li v-if="userRole === 'admin'" class="nav-item">
+        <sidenav-item to="/tables" :class="getRoute() === 'tables' ? 'active' : ''" navText="Tables">
 
-      <li class="nav-item">
-        <sidenav-item
-          to="/billing"
-          :class="getRoute() === 'billing' ? 'active' : ''"
-          :navText="isRTL ? 'الفواتیر' : 'Billing'"
-        >
+          <template v-slot:icon>
+            <i class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"></i>
+          </template>
+        </sidenav-item>
+      </li>
+      <li v-if="userRole === 'admin'" class="nav-item">
+        <sidenav-item to="/billing" :class="getRoute() === 'billing' ? 'active' : ''" navText="Billing">
           <template v-slot:icon>
             <i class="ni ni-credit-card text-success text-sm opacity-10"></i>
           </template>
         </sidenav-item>
       </li>
+      <!-- <li v-if="userRole === 'ADMIN'" class="nav-item">
+        <sidenav-item to="/virtual-reality" :class="getRoute() === 'virtual-reality' ? 'active' : ''"
+          navText="Virtual Reality">
 
-      <li class="nav-item">
-        <sidenav-item
-          to="/virtual-reality"
-          :class="getRoute() === 'virtual-reality' ? 'active' : ''"
-          :navText="isRTL ? 'الواقع الافتراضي' : 'Virtual Reality'"
-        >
           <template v-slot:icon>
             <i class="ni ni-app text-info text-sm opacity-10"></i>
           </template>
         </sidenav-item>
-      </li>
+      </li> -->
 
-      <li class="nav-item">
-        <sidenav-item
-          to="/rtl-page"
-          :class="getRoute() === 'rtl-page' ? 'active' : ''"
-          navText="RTL"
-        >
+      <!-- Additional navigation items for other roles -->
+      <li v-else-if="userRole === 'user'" class="nav-item">
+        <sidenav-item to="/dashboard" :class="getRoute() === 'dashboard' ? 'active' : ''" navText="Home">
           <template v-slot:icon>
-            <i class="ni ni-world-2 text-danger text-sm opacity-10"></i>
+            <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
           </template>
         </sidenav-item>
       </li>
+      <li v-if="userRole === 'user'" class="nav-item">
+        <sidenav-item to="/pinjamkan" :class="getRoute() === 'UserPinjamkan' ? 'active' : ''" navText="Pinjamkan">
 
-      <li class="mt-3 nav-item">
-        <h6
-          v-if="isRTL"
-          class="text-xs ps-4 text-uppercase font-weight-bolder opacity-6"
-          :class="isRTL ? 'me-4' : 'ms-2'"
-        >
-          صفحات المرافق
-        </h6>
-
-        <h6
-          v-else
-          class="text-xs ps-4 text-uppercase font-weight-bolder opacity-6"
-          :class="isRTL ? 'me-4' : 'ms-2'"
-        >
-          ACCOUNT PAGES
-        </h6>
-      </li>
-
-      <li class="nav-item">
-        <sidenav-item
-          to="/profile"
-          :class="getRoute() === 'profile' ? 'active' : ''"
-          :navText="isRTL ? 'حساب تعريفي' : 'Profile'"
-        >
           <template v-slot:icon>
-            <i class="ni ni-single-02 text-dark text-sm opacity-10"></i>
-          </template>
-        </sidenav-item>
-      </li>
-
-      <li class="nav-item">
-        <sidenav-item
-          to="/signin"
-          :class="getRoute() === 'signin' ? 'active' : ''"
-          :navText="isRTL ? 'تسجيل الدخول' : 'Sign In'"
-        >
-          <template v-slot:icon>
-            <i class="ni ni-single-copy-04 text-danger text-sm opacity-10"></i>
-          </template>
-        </sidenav-item>
-      </li>
-
-      <li class="nav-item">
-        <sidenav-item
-          to="/signup"
-          :class="getRoute() === 'signup' ? 'active' : ''"
-          :navText="isRTL ? 'اشتراك' : 'Sign Up'"
-        >
-          <template v-slot:icon>
-            <i class="ni ni-collection text-info text-sm opacity-10"></i>
+            <i class="fa fa-book text-primary text-sm opacity-10"></i>
           </template>
         </sidenav-item>
       </li>
     </ul>
-  </div>
-
-  <div class="pt-3 mx-3 mt-3 sidenav-footer">
-    <sidenav-card
-      :card="{
-        title: 'Need Help?',
-        description: 'Please check our docs',
-        links: [
-          {
-            label: 'Documentation',
-            route:
-              'https://www.creative-tim.com/learning-lab/vue/overview/argon-dashboard/',
-            color: 'dark',
-          },
-          {
-            label: 'Buy now',
-            route:
-              'https://www.creative-tim.com/product/vue-argon-dashboard-pro?ref=vadp',
-            color: 'success',
-          },
-        ],
-      }"
-    />
   </div>
 </template>

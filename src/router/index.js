@@ -14,6 +14,7 @@ import Signin from "../views/Signin.vue";
 
 //USER
 import UserDashboard from "../views/user/Dashboard.vue";
+import UserPinjamkan from "../views/user/Pinjamkan.vue";
 
 const routes = [
   {
@@ -42,7 +43,13 @@ const routes = [
     name: "UserDashboard",
     component: UserDashboard,
   },
+  {
+    path: "/pinjamkan",
+    name: "UserPinjamkan",
+    component: UserPinjamkan,
+  },
 
+  //ADMIN
   {
     path: "/admin/dashboard",
     name: "Dashboard",
