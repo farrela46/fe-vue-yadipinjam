@@ -22,6 +22,7 @@ export default {
       users: [],
       users_edit: [],
       buku: {
+        isbn: '',
         judul: '',
         deskripsi: '',
         penulis: '',
@@ -58,6 +59,25 @@ export default {
     //     this.loading = false;
     //   }
     // },
+    async fetchBookByISBN() {
+      const isbn = this.buku.isbn.trim();
+
+      if (isbn) {
+        try {
+          const response = await axios.post(`${BASE_URL}/book/get-by-ISBN`, { isbn });
+
+          const bookData = response.data; 
+          this.buku.deskripsi = bookData.deskripsi;
+          this.buku.penulis = bookData.penulis;
+          this.buku.penerbit = bookData.penerbit;
+          this.buku.tahun_terbit = bookData.tahun_terbit;
+          this.buku.trust_point = bookData.trust_point;
+
+        } catch (error) {
+          console.error('Error fetching book by ISBN:', error);
+        } 
+      }
+    },
     async onSubmit() {
       this.loadingRegist = true;
       try {
@@ -176,7 +196,10 @@ export default {
                               buku yang kamu upload</p>
                           </div>
                           <div class="col">
-
+                            <div class="row">
+                              <a>ISBN Buku</a>
+                              <argon-input type="text" placeholder="ISBN Buku" v-model="buku.isbn" @input="fetchBookByISBN" />
+                            </div>
                             <div class="row">
                               <a>Judul Buku</a>
                               <argon-input type="text" placeholder="Judul Buku " v-model="buku.judul" />

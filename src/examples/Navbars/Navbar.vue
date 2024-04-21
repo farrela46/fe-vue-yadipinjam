@@ -62,7 +62,7 @@ export default {
     },
     async onLogout() {
       try {
-        await axios.post(`${BASE_URL}/logout`, {}, {
+        await axios.post(`${BASE_URL}/auth/logout`, {}, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem('access_token'),
           }
