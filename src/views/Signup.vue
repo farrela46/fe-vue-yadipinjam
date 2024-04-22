@@ -19,9 +19,9 @@ export default {
   data() {
     return {
       username: '',
-      // name: '',
       email: '',
       password: '',
+      phone: '',
       store: null,
       body: null,
       loading: false
@@ -40,10 +40,10 @@ export default {
       this.loading = true;
       try {
         const response = await axios.post(`${BASE_URL}/auth/register`, {
-          username : this.username,
-          // name: this.name,
+          username: this.username,
           email: this.email,
-          password: this.password
+          password: this.password,
+          phone: this.phone,
         });
         this.$notify({
           type: 'success',
@@ -65,7 +65,7 @@ export default {
           });
         }
       } finally {
-        this.loading = false; 
+        this.loading = false;
       }
     },
 
@@ -97,7 +97,7 @@ export default {
     </div>
   </div>
   <main class="main-content mt-0">
-   
+
     <div class="mx-3 mt-2 position-relative" :style="{
           backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ) ,url(' + require('@/assets/img/library.png') + ')',
           backgroundSize: 'cover',
@@ -126,8 +126,13 @@ export default {
             <div class="card-body">
               <form role="form" @submit.prevent="onSubmit">
                 <argon-input v-model="username" id="name" type="text" placeholder="Username" aria-label="Name" />
-                <!-- <argon-input v-model="name" id="name" type="text" placeholder="Name" aria-label="Name" /> -->
                 <argon-input v-model="email" id="email" type="email" placeholder="Email" aria-label="Email" />
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="basic-addon1">+62</span>
+                  <input type="text" class="form-control" v-model="phone" placeholder="Phone Number" aria-label="phone"
+                    aria-describedby="basic-addon1">
+                </div>
+                <!-- <argon-input v-model="phone" id="name" type="text" placeholder="Phone Number" aria-label="Phone" /> -->
                 <argon-input v-model="password" id="password" type="password" placeholder="Password"
                   aria-label="Password" />
                 <!-- <argon-checkbox checked>
@@ -137,9 +142,10 @@ export default {
                   </label>
                 </argon-checkbox> -->
                 <div class="text-center">
-                  <argon-button v-if="!loading" fullWidth color="dark" type="submit" variant="gradient" class="my-4 mb-2">Sign up</argon-button>
-                  <argon-button v-else fullWidth color="dark" variant="gradient" class="my-4 mb-2" disabled><v-progress-circular
-                      indeterminate></v-progress-circular></argon-button>
+                  <argon-button v-if="!loading" fullWidth color="dark" type="submit" variant="gradient"
+                    class="my-4 mb-2">Sign up</argon-button>
+                  <argon-button v-else fullWidth color="dark" variant="gradient" class="my-4 mb-2"
+                    disabled><v-progress-circular indeterminate></v-progress-circular></argon-button>
                 </div>
                 <p class="text-sm mt-3 mb-0">
                   Sudah punya akun?

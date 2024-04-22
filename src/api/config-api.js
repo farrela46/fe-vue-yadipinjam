@@ -10,7 +10,7 @@ let BASE_URL;
 if (process.env.NODE_ENV === 'production') {
   BASE_URL = 'https://yadipinjam.enzo.blue/api';
 } else {
-  BASE_URL = 'http://127.0.0.1:8000/api';
+  BASE_URL = 'https://yadipinjam.enzo.blue/api';
 }
 
 export default BASE_URL;
