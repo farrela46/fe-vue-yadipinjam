@@ -44,13 +44,13 @@ export default {
     },
     async getUser() {
       try {
-        const response = await axios.get(`${BASE_URL}/user`, {
+        const response = await axios.get(`${BASE_URL}/auth/user`, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem('access_token')
           }
         });
-        this.userName = response.data.username;
-        this.userRole = response.data.role;
+        this.userName = response.data.data.username;
+        this.userRole = response.data.data.role;
       } catch (error) {
         console.error(error);
 

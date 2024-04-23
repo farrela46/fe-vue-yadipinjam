@@ -21,14 +21,15 @@ export default {
     return {
       users: [],
       users_edit: [],
+      searchIsbn: '',
       buku: {
-        isbn: '',
+        ISBN: '',
         judul: '',
         deskripsi: '',
         penulis: '',
         penerbit: '',
         tahun_terbit: '',
-        trust_point: '',
+        harga: '',
       },
       loading: false,
       loadingRegist: false,
@@ -38,6 +39,13 @@ export default {
     };
   },
   methods: {
+    handleclose() {
+      this.clearForm();
+    },
+    extractYear(dateString) {
+      const dateObj = new Date(dateString);
+      return dateObj.getFullYear();
+    },
     closeModal() {
       document.getElementById('closeModal').click();
     },
@@ -60,55 +68,65 @@ export default {
     //   }
     // },
     async fetchBookByISBN() {
-      const isbn = this.buku.isbn.trim();
+      const trimmedIsbn = this.buku.ISBN.trim();
+      if (trimmedIsbn) {
+        const isbnUpperCase = trimmedIsbn.toUpperCase();
 
-      if (isbn) {
-        try {
-          const response = await axios.post(`${BASE_URL}/book/get-by-ISBN`, { isbn });
+        if (this.timer) {
+          clearTimeout(this.timer);
+        }
+        this.timer = setTimeout(async () => {
+          try {
+            this.loadingRegist = true;
+            const response = await axios.post(`${BASE_URL}/fetch-book`, {
+              ISBN: isbnUpperCase,
+            });
+            const bookData = response.data.data;
+            this.buku = {
+              ...this.buku,
+              judul: bookData.title || "",
+              penulis: bookData.authors ? bookData.authors.join(", ") : "",
+              penerbit: bookData.publisher || "",
+              tahun_terbit: bookData.date || "",
+              harga: ""
+            };
 
-          const bookData = response.data; 
-          this.buku.deskripsi = bookData.deskripsi;
-          this.buku.penulis = bookData.penulis;
-          this.buku.penerbit = bookData.penerbit;
-          this.buku.tahun_terbit = bookData.tahun_terbit;
-          this.buku.trust_point = bookData.trust_point;
-
-        } catch (error) {
-          console.error('Error fetching book by ISBN:', error);
-        } 
+          } catch (error) {
+            console.error('Error fetching book by ISBN:', error);
+          } finally {
+            this.loadingRegist = false;
+          }
+        }, 2000); // Delay the API request by 2000 milliseconds (2 seconds)
       }
     },
     async onSubmit() {
-      this.loadingRegist = true;
       try {
-        const response = await axios.post(`${BASE_URL}/register`, {
-          name: this.register.name,
-          email: this.register.email,
-          password: this.register.password
-        });
-        this.getAllUser();
-        this.$notify({
-          type: 'success',
-          title: 'Success',
-          text: response.data.message,
-          color: 'green'
-        });
-      } catch (error) {
-        console.error(error);
+        this.loadingRegist = true;
+        const year = this.extractYear(this.buku.tahun_terbit);
 
-        if (error.response && error.response.data.message) {
-          const errorMessage = error.response.data.message;
-          this.$notify({
-            type: 'error',
-            title: 'Error',
-            text: errorMessage,
-            color: 'red'
-          });
-        }
+        const response = await axios.post(`${BASE_URL}/book/upload`, {
+          ISBN: this.buku.ISBN,
+          authors: this.buku.penulis,
+          publisher: this.buku.penerbit,
+          title: this.buku.judul,
+          description: this.buku.deskripsi,
+          price: this.buku.harga,
+          year: year
+        },
+          {
+            headers: {
+              Authorization: 'Bearer ' + localStorage.getItem('access_token')
+            }
+          }
+
+        );
+        this.closeModal();
+        this.clearForm();
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error uploading book:", error);
       } finally {
         this.loadingRegist = false;
-        this.clearForm();
-        this.closeModal();
       }
     },
     async deleteUser(id) {
@@ -131,12 +149,13 @@ export default {
       }
     },
     clearForm() {
+      this.buku.ISBN = '';
       this.buku.judul = '';
       this.buku.deskripsi = '';
       this.buku.penulis = '';
       this.buku.penerbit = '';
       this.buku.tahun_terbit = '';
-      this.buku.trust_point = '';
+      this.buku.harga = '';
     },
     openDeleteConfirmation(id) {
       this.selectedUserId = id;
@@ -184,30 +203,35 @@ export default {
                   <div class="modal-content">
                     <div class="modal-header">
                       <h5 class="modal-title text-black" id="userModalLabel">Informasi Buku</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                        id="closeModal"></button>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal"
+                        @click="handleclose"></button>
                     </div>
                     <form role="form" @submit.prevent="onSubmit">
                       <div class="modal-body">
                         <div class="row">
-                          <div class="col">
+                          <div class="col-4">
                             <h3>Upload Buku Anda</h3>
                             <p>Buku yang kamu upload akan menjadi publik, dan orang lain yang melihat dapat meminjam
                               buku yang kamu upload</p>
                           </div>
-                          <div class="col">
+                          <div class="col-8">
                             <div class="row">
                               <a>ISBN Buku</a>
-                              <argon-input type="text" placeholder="ISBN Buku" v-model="buku.isbn" @input="fetchBookByISBN" />
+                              <argon-input type="text" icon="fas fa-search" iconDir="left" placeholder="Cari ISBN Buku"
+                                v-model="buku.ISBN" @input="fetchBookByISBN" />
+                            </div>
+                            <div class="row">
+                              <a>ISBN Buku</a>
+                              <argon-input type="text" placeholder="ISBN Buku" v-model="buku.ISBN"
+                                @input="fetchBookByISBN" />
                             </div>
                             <div class="row">
                               <a>Judul Buku</a>
                               <argon-input type="text" placeholder="Judul Buku " v-model="buku.judul" />
                             </div>
                             <div class="row">
-                              <a>Deskripsi</a>
-                              <argon-input type="text" size="lg" placeholder="Deskripsi Buku"
-                                v-model="buku.deskripsi" />
+                              <a>Kondisi Buku</a>
+                              <argon-input type="text" size="lg" placeholder="Kondisi Buku" v-model="buku.deskripsi" />
                             </div>
                             <div class="row">
                               <a>Penulis</a>
@@ -219,18 +243,19 @@ export default {
                             </div>
                             <div class="row">
                               <a>Tahun Terbit</a>
-                              <argon-input type="date" placeholder="Tahun Terbit" v-model="buku.tahun_terbit" />
+                              <argon-input type="date" placeholder="Tanggal Terbit" v-model="buku.tahun_terbit" />
                             </div>
                             <div class="row">
-                              <a>Trust Point</a>
-                              <argon-input type="text" placeholder="Trust Point" v-model="buku.trust_point" />
+                              <a>Harga Buku</a>
+                              <argon-input type="text" placeholder="Harga Buku" v-model="buku.harga" />
                             </div>
                           </div>
                         </div>
                       </div>
                       <v-progress-linear v-if="loadingRegist" indeterminate></v-progress-linear>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                          @click="handleclose">Close</button>
                         <button type="submit" class="btn btn-primary">Save</button>
                       </div>
                     </form>
