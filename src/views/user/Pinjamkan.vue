@@ -19,7 +19,7 @@ export default {
   },
   data() {
     return {
-      users: [],
+      bukus: [],
       users_edit: [],
       searchIsbn: '',
       buku: {
@@ -31,6 +31,7 @@ export default {
         tahun_terbit: '',
         harga: '',
       },
+      selectedFiles: [],
       loading: false,
       loadingRegist: false,
       dialog: false,
@@ -52,21 +53,21 @@ export default {
     formatDate(data_date) {
       return moment.utc(data_date).format('YYYY-MM-DD')
     },
-    // async getAllUser() {
-    //   this.loading = true;
-    //   try {
-    //     const response = await axios.get(`${BASE_URL}/getUser`, {
-    //       headers: {
-    //         Authorization: "Bearer " + localStorage.getItem('access_token')
-    //       }
-    //     });
-    //     this.users = response.data;
-    //   } catch (error) {
-    //     console.error(error);
-    //   } finally {
-    //     this.loading = false;
-    //   }
-    // },
+    async retrieveBuku() {
+      this.loading = true;
+      try {
+        const response = await axios.get(`${BASE_URL}/book/circulatedBook`, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem('access_token')
+          }
+        });
+        this.bukus = response.data.data;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
+    },
     async fetchBookByISBN() {
       const trimmedIsbn = this.buku.ISBN.trim();
       if (trimmedIsbn) {
@@ -96,7 +97,7 @@ export default {
           } finally {
             this.loadingRegist = false;
           }
-        }, 2000); // Delay the API request by 2000 milliseconds (2 seconds)
+        }, 2000);
       }
     },
     async onSubmit() {
@@ -104,29 +105,61 @@ export default {
         this.loadingRegist = true;
         const year = this.extractYear(this.buku.tahun_terbit);
 
-        const response = await axios.post(`${BASE_URL}/book/upload`, {
-          ISBN: this.buku.ISBN,
-          authors: this.buku.penulis,
-          publisher: this.buku.penerbit,
-          title: this.buku.judul,
-          description: this.buku.deskripsi,
-          price: this.buku.harga,
-          year: year
-        },
-          {
-            headers: {
-              Authorization: 'Bearer ' + localStorage.getItem('access_token')
-            }
-          }
+        const formData = new FormData();
+        formData.append('ISBN', this.buku.ISBN);
+        formData.append('authors', this.buku.penulis);
+        formData.append('publisher', this.buku.penerbit);
+        formData.append('title', this.buku.judul);
+        formData.append('description', this.buku.deskripsi);
+        formData.append('price', this.buku.harga);
+        formData.append('year', year);
 
-        );
+        this.selectedFiles.forEach((file, index) => {
+          formData.append('image', file);
+          index
+        });
+
+        console.log('FormData before sending:', formData);
+
+        const response = await axios.post(`${BASE_URL}/book/upload`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          },
+        });
+
+        console.log('Upload successful:', response.data);
+
         this.closeModal();
         this.clearForm();
-        console.log(response.data);
+        this.retrieveBuku();
       } catch (error) {
-        console.error("Error uploading book:", error);
+        console.error('Error uploading book:', error);
       } finally {
         this.loadingRegist = false;
+      }
+    },
+    handleFileChange(event) {
+      const fileInput = event.target;
+      this.selectedFiles = Array.from(fileInput.files);
+    },
+    async activate(id) {
+      try {
+        const response = await axios.get(`${BASE_URL}/book/circulated/activated/` + id, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          },
+        });
+        console.log(response)
+        this.$notify({
+          type: 'success',
+          title: 'Success',
+          text: 'User berhasil dihapus',
+          color: 'green'
+        });
+        this.retrieveBuku();
+      } catch (error) {
+        console.error(error);
       }
     },
     async deleteUser(id) {
@@ -156,6 +189,7 @@ export default {
       this.buku.penerbit = '';
       this.buku.tahun_terbit = '';
       this.buku.harga = '';
+      this.selectedFiles = null
     },
     openDeleteConfirmation(id) {
       this.selectedUserId = id;
@@ -180,7 +214,7 @@ export default {
     },
   },
   mounted() {
-    // this.getAllUser();
+    this.retrieveBuku();
   },
 };
 </script>
@@ -213,6 +247,15 @@ export default {
                             <h3>Upload Buku Anda</h3>
                             <p>Buku yang kamu upload akan menjadi publik, dan orang lain yang melihat dapat meminjam
                               buku yang kamu upload</p>
+                            <div class="row">
+                              <div class="col">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                  @click="handleclose">Close</button>
+                              </div>
+                              <div class="col">
+                                <button type="submit" class="btn btn-primary">Upload</button>
+                              </div>
+                            </div>
                           </div>
                           <div class="col-8">
                             <div class="row">
@@ -228,6 +271,12 @@ export default {
                             <div class="row">
                               <a>Judul Buku</a>
                               <argon-input type="text" placeholder="Judul Buku " v-model="buku.judul" />
+                            </div>
+                            <div class="row mb-2 px-2">
+                              <a>Foto Buku</a>
+                              <input type="file" class="form-control" ref="fileInput" @change="handleFileChange"
+                                multiple>
+
                             </div>
                             <div class="row">
                               <a>Kondisi Buku</a>
@@ -253,11 +302,11 @@ export default {
                         </div>
                       </div>
                       <v-progress-linear v-if="loadingRegist" indeterminate></v-progress-linear>
-                      <div class="modal-footer">
+                      <!-- <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                           @click="handleclose">Close</button>
                         <button type="submit" class="btn btn-primary">Save</button>
-                      </div>
+                      </div> -->
                     </form>
                   </div>
                 </div>
@@ -266,9 +315,9 @@ export default {
                 <div v-if="loading" class="divider">
                   <v-progress-linear indeterminate></v-progress-linear>
                 </div>
-                <div v-else-if="users.length === 0" class="text-center mt-3">
+                <!-- <div v-else class="text-center mt-3">
                   <p>Kamu tidak memiliki buku yang siap dipinjamkan</p>
-                </div>
+                </div> -->
                 <div v-else class="table-responsive p-0">
                   <table class="table align-items-center mb-0">
                     <thead>
@@ -277,23 +326,23 @@ export default {
                           No
                         </th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                          Title
+                          ISBN
                         </th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                           Author
                         </th>
                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                           Penerbit
                         </th>
-                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                           Tahun Terbit
-                        </th>
-                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                          Trust Point</th>
+                        </th> -->
+                        <th class="text-left text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                          Aksi</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(user, index) in users" :key="index">
+                      <tr v-for="(buku, index) in bukus" :key="index">
                         <td>
                           <div class="px-2 py-1">
                             <div class="d-flex justify-content-center">
@@ -304,25 +353,27 @@ export default {
                         <td>
                           <div class="d-flex px-2 py-1">
                             <div class="d-flex flex-column justify-content-center">
-                              <h6 class="mb-0 text-sm">{{ user.name }}</h6>
+                              <h6 class="mb-0 text-sm">{{ buku.book_title }}</h6>
                               <p class="text-xs text-secondary mb-0">
-                                {{ user.email }}
+                                {{ buku.ISBN }}
                               </p>
                             </div>
                           </div>
                         </td>
-                        <td>
-                          <p class="text-xs font-weight-bold mb-0">+62</p>
-                          <p class="text-xs text-secondary mb-0">{{ user.no_telp }}</p>
-                        </td>
-                        <td class="align-middle text-center text-sm">
-                          <span class="badge badge-sm bg-gradient-success">{{ user.role }}</span>
+                        <td class="align-left text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{buku.authors}}</span>
                         </td>
                         <td class="align-middle text-center">
-                          <span class="text-secondary text-xs font-weight-bold">{{ formatDate(user.created_at) }}</span>
+                          <span class="text-secondary text-xs font-weight-bold">{{buku.publisher}}</span>
                         </td>
+                        
                         <td class="align-middle">
-                          <span class="mx-3" style="font-size: 1rem; cursor: pointer;" @click="editUser(user.id)">
+                          <span class="mx-2" style="font-size: 1rem; cursor: pointer;" @click="activate(buku.circulated_book_id)">
+                            <span style="color: green;">
+                              <i class="fas fa-paper-plane"></i>
+                            </span>
+                          </span>
+                          <!-- <span class="mx-3" style="font-size: 1rem; cursor: pointer;" @click="editUser(user.id)">
                             <span style="color: green;">
                               <i class="fa fa-pencil-square-o"></i>
                             </span>
@@ -331,7 +382,7 @@ export default {
                             <span style="color: red;">
                               <i class="fa fa-trash"></i>
                             </span>
-                          </span>
+                          </span> -->
                         </td>
                       </tr>
                     </tbody>

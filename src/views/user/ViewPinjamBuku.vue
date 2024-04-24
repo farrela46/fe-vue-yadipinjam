@@ -1,8 +1,6 @@
 <script>
-// import { useRoute } from "vue-router";
 import axios from "axios";
 import BASE_URL from '@/api/config-api';
-// import AuthorsTable from "@/views/components/AuthorsTable.vue";
 
 export default {
   components: {
@@ -10,35 +8,32 @@ export default {
   data() {
     return {
       products: [],
-      loadingAPI: false
     };
   },
   mounted() {
     this.retrieveBuku();
   },
   methods: {
-    getImageLink(link) {
-      return link ? link : require('@/assets/img/noPic.png');
-    },
     formatPrice(price) {
       const numericPrice = parseFloat(price);
       return numericPrice.toLocaleString('id-ID');
     },
-    handlePinjamClick() {
-      this.$router.push('/pinjamkan');
-    },
     async retrieveBuku() {
       this.loadingAPI = true;
       try {
-        const response = await axios.get(`${BASE_URL}/book/`, {
+        const id = this.$route.params.id;
+
+        const formData = new FormData();
+        formData.append('circulated_IDISBN', id);
+
+        const response = await axios.post(`${BASE_URL}/book/circulated/detail`, formData, {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem('access_token')
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: 'Bearer ' + localStorage.getItem('access_token')
           }
         });
 
-        this.products = response.data.data.data;
-
-  
+        this.products = response.data.data;
       } catch (error) {
         console.error(error);
       } finally {
@@ -51,57 +46,57 @@ export default {
 
 <template>
   <div class="py-4 container-fluid">
-    <div class="loading" v-if="loadingAPI">
-      <div class="row justify-content-center">
-        <v-progress-circular model-value="20" :size="128" :width="12"></v-progress-circular>
-      </div>
-    </div>
-    <div class="utama" v-else>
-      <div class="row mt-3" v-if="products && products.length > 0">
+    <div class="container">
+      <div class="row mt-3">
+        <div class="card border-0" v-if="!loading">
+          <div class="row p-2 pt-4">
+            <div class="col-md-3 ">
+              <img :src="products.foto" class="rounded img-fluid" alt="Book Image">
+            </div>
+            <div class="col-md-9 d-flex flex-column justify-content-between">
+              <a style="font-size: 32px; font-weight: bold;">{{ products.judul }}</a>
 
-        <router-link :to="'/pinjam/' + item.ISBN" class="col-md-2 mt-2 mb-2 col-6" v-for="item in products"
-          :key="item.id">
-          <div class="product-single-card shadow">
-            <div class="product-top-area">
-              <div class="product-img">
-                <div class="first-view">
-                  <img alt="Book Image" :src="getImageLink(item.imagelink)" class="img-fluid">
-                </div>
-                <div class="hover-view">
-                  <img alt="Book Image" :src="getImageLink(item.imagelink)" class="img-fluid">
-                </div>
+              <!-- <div class="ratings">
+                  <div class="stars d-flex">
+                    <div class="theme-text mr-2">Product Ratings: </div>
+                    <div>&#9733;</div>
+                    <div>&#9733;</div>
+                    <div>&#9733;</div>
+                    <div>&#9733;</div>
+                    <div>&#9733;</div>
+                    <div class="ml-2">(4.5) 50 Reviews</div>
+                  </div>
+                </div> -->
+              <div class="price my-2" style="font-weight: bold; font-size: 32px;">Rp. {{ formatPrice(products.harga) }}
               </div>
-              <div class="sideicons">
-                <button class="sideicons-btn">
-                  <v-icon icon="mdi-heart"></v-icon>
-                </button>
-                <button class="sideicons-btn" @click.prevent="addCart(item.id)">
-                  <v-icon icon="mdi-cart-plus"></v-icon>
-                </button>
+              <div class="theme-text subtitle">Deskripsi:</div>
+              <div class="brief-description">
+                {{ products.desc }}
               </div>
-            </div>
-            <div class="product-info p-2">
-              <h6 class="text-muted text-light"><a href="#">{{ item.ISBN }}</a></h6>
-              <h6 class="text-uppercase"><a>{{ item.title }}</a></h6>
-              <div class="d-flex align-items-center">
-                <a class="text-muted"><b>Tahun Terbit: </b>{{ item.year }}</a>
-              </div>
-              <!-- <div class="d-flex align-items-center py-2">
-              <a class="text-bold" style="color: blue; font-size: 18px">Rp. {{ formatPrice(item.harga) }}</a> 
-          </div> -->
-            </div>
-          </div>
-        </router-link>
-      </div>
-      <div class="text-center mt-3" v-else>
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-md-4">
-              <div class="card text-center hover-card" style="width: 18rem; cursor: pointer;"
-                @click="handlePinjamClick">
-                <div class="card-body">
-                  <i class="fas fa-plus fa-5x text-primary mb-3"></i>
-                  <h5 class="card-title">PINJAMKAN BUKU</h5>
+              <br>
+              <div class="mt-auto pb-2">
+                <!-- <a>Tags:</a>
+                <p>Tag</p>
+                <a>Category &nbsp;: </a>
+                <br> -->
+
+                <h5>Detail</h5>
+                <a>No ISBN:</a>
+                <p>{{ products.no_isbn }}</p>
+                <a>Pengarang:</a>
+                <p>{{ products.pengarang }}</p>
+                <a>Penerbit:</a>
+                <p>{{ products.penerbit }}</p>
+                <!-- <v-chip class="mt-3">Tag</v-chip> -->
+                <hr>
+                <div class="row">
+                  <!-- <div class="col-md-3 mt-2">
+                      <input type="number" class="form-control" value="1">
+                    </div> -->
+                  <div class="col-md-9">
+                    <button class="btn addBtn btn-block mt-2 btn-primary" @click="addToCart(parfum.id)">Add to
+                      basket</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -112,16 +107,6 @@ export default {
   </div>
 </template>
 <style>
-.hover-card {
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.hover-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-
 .user-select-none {
   user-select: none;
 }
@@ -131,16 +116,8 @@ a {
   color: unset;
 }
 
-
-.search-container {
-  width: 400px;
-  display: block;
-  margin: 0 auto;
-  padding-right: 30px;
-}
-
 .product-single-card {
-  /* padding: 10px; */
+  padding: 10px;
   border-radius: 10px;
   box-shadow: 1px 1px 15px #cccccc40;
   transition: 0.5s ease-in;
@@ -204,7 +181,7 @@ a {
   scale: 1.2;
 } */
 .product-single-card .product-top-area .product-img img {
-  width: 250px;
+  /* width: 250px;  */
   /* height: 150px;  */
   /* object-fit: cover; */
   /* Add a 5px solid white border */
@@ -285,5 +262,17 @@ a {
 .product-single-card .product-info .old-price {
   text-decoration: line-through;
   opacity: 70%;
+}
+
+
+.search-container {
+  width: 400px;
+  display: block;
+  margin: 0 auto;
+  padding-right: 30px;
+}
+
+.card {
+  border-radius: 10px !important;
 }
 </style>

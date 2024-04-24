@@ -30,21 +30,26 @@ export default {
     async retrieveBuku() {
       this.loadingAPI = true;
       try {
-        const response = await axios.get(`${BASE_URL}/book/`, {
+        const isbn = this.$route.params.isbn;
+
+        const formData = new FormData();
+        formData.append('ISBN', isbn);
+
+        const response = await axios.post(`${BASE_URL}/book/circulated`, formData, {
           headers: {
-            Authorization: "Bearer " + localStorage.getItem('access_token')
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: 'Bearer ' + localStorage.getItem('access_token')
           }
         });
 
-        this.products = response.data.data.data;
-
-  
+        this.products = response.data.data;
       } catch (error) {
         console.error(error);
       } finally {
         this.loadingAPI = false;
       }
-    },
+    }
+
   },
 };
 </script>
@@ -59,7 +64,7 @@ export default {
     <div class="utama" v-else>
       <div class="row mt-3" v-if="products && products.length > 0">
 
-        <router-link :to="'/pinjam/' + item.ISBN" class="col-md-2 mt-2 mb-2 col-6" v-for="item in products"
+        <router-link :to="'/pinjam/' + item.ISBN + '/'+ item.circulated_book_id" class="col-md-2 mt-2 mb-2 col-6" v-for="item in products"
           :key="item.id">
           <div class="product-single-card shadow">
             <div class="product-top-area">
@@ -82,13 +87,11 @@ export default {
             </div>
             <div class="product-info p-2">
               <h6 class="text-muted text-light"><a href="#">{{ item.ISBN }}</a></h6>
-              <h6 class="text-uppercase"><a>{{ item.title }}</a></h6>
-              <div class="d-flex align-items-center">
+              <h6 class="text-uppercase"><a>{{ item.book_title }}</a></h6>
+              <p class="text-black"><b>Pemilik:</b> {{ item.uploader_name }}</p>
+              <!-- <div class="d-flex align-items-center">
                 <a class="text-muted"><b>Tahun Terbit: </b>{{ item.year }}</a>
-              </div>
-              <!-- <div class="d-flex align-items-center py-2">
-              <a class="text-bold" style="color: blue; font-size: 18px">Rp. {{ formatPrice(item.harga) }}</a> 
-          </div> -->
+              </div> -->
             </div>
           </div>
         </router-link>

@@ -14,6 +14,8 @@ import Signin from "../views/Signin.vue";
 
 //USER
 import UserDashboard from "../views/user/Dashboard.vue";
+import ViewCircBook from "../views/user/ViewCircBook.vue";
+import ViewPinjamBuku from "../views/user/ViewPinjamBuku.vue";
 import UserPinjamkan from "../views/user/Pinjamkan.vue";
 
 const routes = [
@@ -40,8 +42,18 @@ const routes = [
   //USER
   {
     path: "/dashboard",
-    name: "UserDashboard",
+    name: "Catalogue",
     component: UserDashboard,
+  },
+  {
+    path: '/pinjam/:isbn',
+    name: 'Pinjam Buku',
+    component: ViewCircBook,
+  },
+  {
+    path: '/pinjam/:isbn/:id',
+    name: 'Detail Pinjam Buku',
+    component: ViewPinjamBuku,
   },
   {
     path: "/pinjamkan",

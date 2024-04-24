@@ -62,11 +62,11 @@ export default {
     },
     async onLogout() {
       try {
-        await axios.post(`${BASE_URL}/auth/logout`, {}, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem('access_token'),
-          }
-        });
+        // await axios.delete(`${BASE_URL}/auth/logout`, {}, {
+        //   headers: {
+        //     Authorization: "Bearer " + localStorage.getItem('access_token'),
+        //   }
+        // });
 
         localStorage.removeItem('access_token');
         this.$router.push('/login');
@@ -92,9 +92,9 @@ export default {
           <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
             <a @click="minimizeSidebar" class="p-0 nav-link text-black" id="iconNavbarSidenav">
               <div class="sidenav-toggler-inner">
-                <i class="sidenav-toggler-line bg-black"></i>
-                <i class="sidenav-toggler-line bg-black"></i>
-                <i class="sidenav-toggler-line bg-black"></i>
+                <i class="sidenav-toggler-line bg-white"></i>
+                <i class="sidenav-toggler-line bg-white"></i>
+                <i class="sidenav-toggler-line bg-white"></i>
               </div>
             </a>
           </li>

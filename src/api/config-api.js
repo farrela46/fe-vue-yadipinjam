@@ -10,7 +10,20 @@ let BASE_URL;
 if (process.env.NODE_ENV === 'production') {
   BASE_URL = 'https://yadipinjam.enzo.blue/api';
 } else {
-  BASE_URL = 'https://yadipinjam.enzo.blue/api';
+  BASE_URL = 'http://127.0.0.1:3333/api';
 }
+
+// if (process.env.NODE_ENV === 'production') {
+//   BASE_URL = 'https://yadipinjam.enzo.blue/api';
+// } else {
+//   BASE_URL = 'https://yadipinjam.enzo.blue/api';
+// }
+
+// if (process.env.NODE_ENV === 'production') {
+//   BASE_URL = 'https://yadipinjam.enzo.blue/api';
+// } else {
+//   BASE_URL = 'http://10.217.20.28:3333/api';
+// }
+
 
 export default BASE_URL;
