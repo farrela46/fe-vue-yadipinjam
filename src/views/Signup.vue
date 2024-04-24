@@ -51,7 +51,16 @@ export default {
           text: response.data.message,
           color: 'green'
         });
-        this.$router.push('/login');
+        const { role } = response.data.data.user;
+
+        if (role === 'admin') {
+          localStorage.setItem('access_token', response.data.data.token.token);
+          this.$router.push('/admin/dashboard');
+          console.log('login success;')
+        } else if (role === 'user') {
+          localStorage.setItem('access_token', response.data.data.token.token);
+          this.$router.push('/dashboard');
+        }
       } catch (error) {
         console.error(error);
 
