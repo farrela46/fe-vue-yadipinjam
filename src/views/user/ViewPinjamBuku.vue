@@ -1,13 +1,16 @@
 <script>
 import axios from "axios";
 import BASE_URL from '@/api/config-api';
+import ArgonAlert from "@/components/ArgonAlert.vue";
 
 export default {
   components: {
+    ArgonAlert
   },
   data() {
     return {
       products: [],
+      showAlert: false
     };
   },
   mounted() {
@@ -18,13 +21,37 @@ export default {
       const numericPrice = parseFloat(price);
       return numericPrice.toLocaleString('id-ID');
     },
+    async pinjam(id) {
+      try {
+        const formData = new FormData();
+        formData.append('circulated_ID', id);
+
+        const response = await axios.post(`${BASE_URL}/rent/borrow`, formData, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: 'Bearer ' + localStorage.getItem('access_token')
+          }
+        });
+        console.log(response);
+        this.showAlert = true;
+        this.$notify({
+          type: 'success',
+          title: 'Success',
+          text: 'User berhasil dihapus',
+          color: 'green'
+        });
+        this.retrieveBuku();
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async retrieveBuku() {
       this.loadingAPI = true;
       try {
         const id = this.$route.params.id;
 
         const formData = new FormData();
-        formData.append('circulated_IDISBN', id);
+        formData.append('circulated_ID', id);
 
         const response = await axios.post(`${BASE_URL}/book/circulated/detail`, formData, {
           headers: {
@@ -33,7 +60,7 @@ export default {
           }
         });
 
-        this.products = response.data.data;
+        this.products = response.data.data[0];
       } catch (error) {
         console.error(error);
       } finally {
@@ -48,32 +75,29 @@ export default {
   <div class="py-4 container-fluid">
     <div class="container">
       <div class="row mt-3">
+        <argon-alert v-if="showAlert">
+          <strong>Sukses!</strong> Silahkan tunggu konfirmasi pemilik buku!
+        </argon-alert>
         <div class="card border-0" v-if="!loading">
           <div class="row p-2 pt-4">
             <div class="col-md-3 ">
-              <img :src="products.foto" class="rounded img-fluid" alt="Book Image">
+              <img class="rounded img-fluid" alt="Book Image">
             </div>
             <div class="col-md-9 d-flex flex-column justify-content-between">
-              <a style="font-size: 32px; font-weight: bold;">{{ products.judul }}</a>
-
-              <!-- <div class="ratings">
-                  <div class="stars d-flex">
-                    <div class="theme-text mr-2">Product Ratings: </div>
-                    <div>&#9733;</div>
-                    <div>&#9733;</div>
-                    <div>&#9733;</div>
-                    <div>&#9733;</div>
-                    <div>&#9733;</div>
-                    <div class="ml-2">(4.5) 50 Reviews</div>
-                  </div>
-                </div> -->
-              <div class="price my-2" style="font-weight: bold; font-size: 32px;">Rp. {{ formatPrice(products.harga) }}
+              <a style="font-size: 32px; font-weight: bold;">{{ products.book_title }}</a>
+              <div class="price my-2" style="font-weight: bold; font-size: 32px;">{{ (products.harga) }}
               </div>
-              <div class="theme-text subtitle">Deskripsi:</div>
+              <div class="theme-text subtitle">Uploader:</div>
               <div class="brief-description">
-                {{ products.desc }}
+                {{ products.uploader_name }}
+              </div>
+              <hr>
+              <h5>Deskripsi</h5>
+              <div class="brief-description">
+                {{ products.description }}
               </div>
               <br>
+              <hr>
               <div class="mt-auto pb-2">
                 <!-- <a>Tags:</a>
                 <p>Tag</p>
@@ -82,20 +106,19 @@ export default {
 
                 <h5>Detail</h5>
                 <a>No ISBN:</a>
-                <p>{{ products.no_isbn }}</p>
+                <p>{{ products.ISBN }}</p>
                 <a>Pengarang:</a>
-                <p>{{ products.pengarang }}</p>
+                <p>{{ products.authors }}</p>
                 <a>Penerbit:</a>
-                <p>{{ products.penerbit }}</p>
+                <p>{{ products.publisher }}</p>
                 <!-- <v-chip class="mt-3">Tag</v-chip> -->
-                <hr>
                 <div class="row">
                   <!-- <div class="col-md-3 mt-2">
                       <input type="number" class="form-control" value="1">
                     </div> -->
                   <div class="col-md-9">
-                    <button class="btn addBtn btn-block mt-2 btn-primary" @click="addToCart(parfum.id)">Add to
-                      basket</button>
+                    <button class="btn addBtn btn-block mt-2 btn-primary"
+                      @click="pinjam(products.circulated_book_id)">Pinjam</button>
                   </div>
                 </div>
               </div>

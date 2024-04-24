@@ -334,6 +334,9 @@ export default {
                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                           Penerbit
                         </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                          Status
+                        </th>
                         <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                           Tahun Terbit
                         </th> -->
@@ -366,7 +369,9 @@ export default {
                         <td class="align-middle text-center">
                           <span class="text-secondary text-xs font-weight-bold">{{buku.publisher}}</span>
                         </td>
-                        
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{buku.status}}</span>
+                        </td>
                         <td class="align-middle">
                           <span class="mx-2" style="font-size: 1rem; cursor: pointer;" @click="activate(buku.circulated_book_id)">
                             <span style="color: green;">
