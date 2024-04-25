@@ -125,7 +125,7 @@ onBeforeUnmount(() => {
                         </span>
                       </span>
                       <h5 class="font-weight-bolder mt-3">Daerah</h5>
-                      <p class="pe-5">Daerah layanan kami meliputi Surabaya hingga Afrika</p>
+                      <p class="pe-5">Daerah layanan kami meliputi Surabaya dan sekitarnya</p>
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -160,7 +160,7 @@ onBeforeUnmount(() => {
                         </span>
                       </span>
                       <h5 class="font-weight-bolder mt-3">Keamanan</h5>
-                      <p class="pe-5">Kami akan mengusahakan data pengguna aman pada kami (semoga wkwk)</p>
+                      <p class="pe-5">Kami akan mengusahakan data pengguna aman pada kami </p>
                     </div>
                   </div>
                 </div>
@@ -178,9 +178,11 @@ onBeforeUnmount(() => {
                       belum kita
                       ketahui. Sehingga wawasan kita kian bertambah.
                     </p>
-                    <button type="button" class="btn btn-sm mb-0 mt-3 bg-gradient-success">Pinjam Sekarang!</button>
-                    <router-link to="/faq" class="text-dark font-weight-bolder"> <button type="button"
-                        class="btn btn-sm mb-0 mt-3 mx-3 bg-gradient-info">Cara Peminjaman!</button></router-link>
+                    <router-link to="/login" class="text-dark font-weight-bolder">
+                      <button type="button" class="btn btn-sm mb-0 mt-3 bg-gradient-success">Pinjam Sekarang!</button>
+                    </router-link>
+                    <!-- <router-link to="/faq" class="text-dark font-weight-bolder"> <button type="button"
+                        class="btn btn-sm mb-0 mt-3 mx-3 bg-gradient-info">Cara Peminjaman!</button></router-link> -->
                   </div>
                 </div>
               </div>
@@ -202,11 +204,11 @@ onBeforeUnmount(() => {
                 <div class="col-md-8 text-start mb-5 mt-5">
                   <h2 class="text-white"> YadiDevelop Team, kami <span class="text-white" id="typed"></span></h2>
                   <div id="typed-strings" style="display: none;">
-                    <h1>Lambat</h1>
-                    <h1>Jelek</h1>
-                    <h1>Mahal</h1>
+                    <h1>Cepat</h1>
+                    <h1>Tepat</h1>
+                    <h1>Terbaik</h1>
                   </div>
-                  <p class="text-white opacity-8 mb-0"> Persetan dengan hasil bagus, tugas kelar adalah objektif kami.
+                  <p class="text-white opacity-8 mb-0"> Hasil terbaik datang dari usaha yang terbaik.
                   </p>
                 </div>
               </div>
@@ -222,7 +224,7 @@ onBeforeUnmount(() => {
                         <div class="card-body ps-lg-0">
                           <h5 class="mb-0">Sembiring 'Enzo' Laridho</h5>
                           <h6 class="text-success">System Analyst</h6>
-                          <p class="mb-0">YaDikerjain aja</p>
+                          <p class="mb-0">Best Analyst</p>
                         </div>
                       </div>
                     </div>
@@ -239,7 +241,7 @@ onBeforeUnmount(() => {
                         <div class="card-body ps-lg-0">
                           <h5 class="mb-0">Desyalwa 'Najah' Yuga</h5>
                           <h6 class="text-success">UI Designer</h6>
-                          <p class="mb-0">Atek quotes barang?</p>
+                          <p class="mb-0">Impressive Designer</p>
                         </div>
                       </div>
                     </div>
@@ -258,7 +260,7 @@ onBeforeUnmount(() => {
                         <div class="card-body ps-lg-0">
                           <h5 class="mb-0">Darmawan 'Farrel' Ahmad</h5>
                           <h6 class="text-success">Frontend Developer</h6>
-                          <p class="mb-0">Comot sana comot sini yg penting kelar.</p>
+                          <p class="mb-0">Hi, Im Frontend Engineer.</p>
                         </div>
                       </div>
                     </div>
@@ -275,7 +277,7 @@ onBeforeUnmount(() => {
                         <div class="card-body ps-lg-0">
                           <h5 class="mb-0">Abdullah 'Yasfa' Ainun</h5>
                           <h6 class="text-success">Backend Developer</h6>
-                          <p class="mb-0">Alhamdulillah</p>
+                          <p class="mb-0">Hi, Im Backend Engineer</p>
                         </div>
                       </div>
                     </div>
