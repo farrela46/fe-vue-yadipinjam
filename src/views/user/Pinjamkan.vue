@@ -69,76 +69,81 @@ export default {
       }
     },
     async fetchBookByISBN() {
-      const trimmedIsbn = this.buku.ISBN.trim();
-      if (trimmedIsbn) {
-        const isbnUpperCase = trimmedIsbn.toUpperCase();
+  const trimmedIsbn = this.buku.ISBN.trim();
+  const isbnWithoutDashes = trimmedIsbn.replace(/-/g, ''); // Remove all dashes
 
-        if (this.timer) {
-          clearTimeout(this.timer);
-        }
-        this.timer = setTimeout(async () => {
-          try {
-            this.loadingRegist = true;
-            const response = await axios.post(`${BASE_URL}/fetch-book`, {
-              ISBN: isbnUpperCase,
-            });
-            const bookData = response.data.data;
-            this.buku = {
-              ...this.buku,
-              judul: bookData.title || "",
-              penulis: bookData.authors ? bookData.authors.join(", ") : "",
-              penerbit: bookData.publisher || "",
-              tahun_terbit: bookData.date || "",
-              harga: ""
-            };
+  if (isbnWithoutDashes) {
+    const isbnUpperCase = isbnWithoutDashes.toUpperCase();
 
-          } catch (error) {
-            console.error('Error fetching book by ISBN:', error);
-          } finally {
-            this.loadingRegist = false;
-          }
-        }, 2000);
-      }
-    },
-    async onSubmit() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    this.timer = setTimeout(async () => {
       try {
         this.loadingRegist = true;
-        const year = this.extractYear(this.buku.tahun_terbit);
-
-        const formData = new FormData();
-        formData.append('ISBN', this.buku.ISBN);
-        formData.append('authors', this.buku.penulis);
-        formData.append('publisher', this.buku.penerbit);
-        formData.append('title', this.buku.judul);
-        formData.append('description', this.buku.deskripsi);
-        formData.append('price', this.buku.harga);
-        formData.append('year', year);
-
-        this.selectedFiles.forEach((file, index) => {
-          formData.append('image', file);
-          index
+        const response = await axios.post(`${BASE_URL}/fetch-book`, {
+          ISBN: isbnUpperCase,
         });
+        const bookData = response.data.data;
+        this.buku = {
+          ...this.buku,
+          ISBN: isbnWithoutDashes, // Update ISBN without dashes in the component data
+          judul: bookData.title || "",
+          penulis: bookData.authors ? bookData.authors.join(", ") : "",
+          penerbit: bookData.publisher || "",
+          tahun_terbit: bookData.date || "",
+          harga: ""
+        };
 
-        console.log('FormData before sending:', formData);
-
-        const response = await axios.post(`${BASE_URL}/book/upload`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-          },
-        });
-
-        console.log('Upload successful:', response.data);
-
-        this.closeModal();
-        this.clearForm();
-        this.retrieveBuku();
       } catch (error) {
-        console.error('Error uploading book:', error);
+        console.error('Error fetching book by ISBN:', error);
       } finally {
         this.loadingRegist = false;
       }
-    },
+    }, 2000);
+  }
+},
+
+async onSubmit() {
+  try {
+    this.loadingRegist = true;
+    const year = this.extractYear(this.buku.tahun_terbit);
+
+    const formData = new FormData();
+    formData.append('ISBN', this.buku.ISBN); // Use the sanitized ISBN without dashes
+    formData.append('authors', this.buku.penulis);
+    formData.append('publisher', this.buku.penerbit);
+    formData.append('title', this.buku.judul);
+    formData.append('description', this.buku.deskripsi);
+    formData.append('price', this.buku.harga);
+    formData.append('year', year);
+
+    this.selectedFiles.forEach((file, index) => {
+      formData.append('image', file);
+      index;
+    });
+
+    console.log('FormData before sending:', formData);
+
+    const response = await axios.post(`${BASE_URL}/book/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+      },
+    });
+
+    console.log('Upload successful:', response.data);
+
+    this.closeModal();
+    this.clearForm();
+    this.retrieveBuku();
+  } catch (error) {
+    console.error('Error uploading book:', error);
+  } finally {
+    this.loadingRegist = false;
+  }
+},
+
     handleFileChange(event) {
       const fileInput = event.target;
       this.selectedFiles = Array.from(fileInput.files);
