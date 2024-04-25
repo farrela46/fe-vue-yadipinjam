@@ -44,6 +44,7 @@ const navClasses = computed(() => {
 });
 </script>
 <template>
+  <notifications />
   <div
     v-show="layout === 'landing'"
     class="landing-bg h-100 bg-gradient-primary position-fixed w-100"
