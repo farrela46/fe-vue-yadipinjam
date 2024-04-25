@@ -70,7 +70,7 @@ export default {
     },
     async fetchBookByISBN() {
   const trimmedIsbn = this.buku.ISBN.trim();
-  const isbnWithoutDashes = trimmedIsbn.replace(/-/g, ''); // Remove all dashes
+  const isbnWithoutDashes = trimmedIsbn.replace(/-/g, ''); 
 
   if (isbnWithoutDashes) {
     const isbnUpperCase = isbnWithoutDashes.toUpperCase();
@@ -87,7 +87,7 @@ export default {
         const bookData = response.data.data;
         this.buku = {
           ...this.buku,
-          ISBN: isbnWithoutDashes, // Update ISBN without dashes in the component data
+          ISBN: isbnWithoutDashes, 
           judul: bookData.title || "",
           penulis: bookData.authors ? bookData.authors.join(", ") : "",
           penerbit: bookData.publisher || "",
@@ -110,7 +110,7 @@ async onSubmit() {
     const year = this.extractYear(this.buku.tahun_terbit);
 
     const formData = new FormData();
-    formData.append('ISBN', this.buku.ISBN); // Use the sanitized ISBN without dashes
+    formData.append('ISBN', this.buku.ISBN); 
     formData.append('authors', this.buku.penulis);
     formData.append('publisher', this.buku.penerbit);
     formData.append('title', this.buku.judul);

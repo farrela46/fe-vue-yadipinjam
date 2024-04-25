@@ -20,6 +20,7 @@ export default {
     getImageLink(link) {
       return link ? link : require('@/assets/img/noPic.png');
     },
+    
     formatPrice(price) {
       const numericPrice = parseFloat(price);
       return numericPrice.toLocaleString('id-ID');
@@ -36,7 +37,7 @@ export default {
           }
         });
 
-        this.products = response.data.data.data;
+        this.products = response.data.data;
 
   
       } catch (error) {

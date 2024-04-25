@@ -81,7 +81,7 @@ export default {
         <div class="card border-0" v-if="!loading">
           <div class="row p-2 pt-4">
             <div class="col-md-3 ">
-              <img class="rounded img-fluid" alt="Book Image">
+              <img src="@/assets/img/noPic.png" class="rounded img-fluid" alt="Book Image">
             </div>
             <div class="col-md-9 d-flex flex-column justify-content-between">
               <a style="font-size: 32px; font-weight: bold;">{{ products.book_title }}</a>
