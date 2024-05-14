@@ -80,119 +80,73 @@ export default {
 </script>
 
 <template>
-  <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl"
-    :class="isRTL ? 'top-0 position-sticky z-index-sticky' : ''" v-bind="$attrs" id="navbarBlur" data-scroll="true">
-    <div class="px-3 py-1 container-fluid">
-      <breadcrumbs :current-page="currentRouteName" :current-directory="currentDirectory" />
-      <div class="mt-2 collapse navbar-collapse mt-sm-0 me-md-0 me-sm-4" :class="'px-0 me-sm-4'" id="navbar">
-        <div class="pe-md-3 d-flex align-items-center" :class="'me-md-auto ms-md-auto'">
+  <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" v-bind="$attrs" id="navbarBlur" data-scroll="true">
+  <div class="px-3 py-1 container-fluid">
+    <breadcrumbs :current-page="currentRouteName" :current-directory="currentDirectory" />
+    <div class="mt-2 collapse navbar-collapse mt-sm-0 me-md-0 me-sm-4" :class="'px-0 me-sm-4'" id="navbar">
+      <div class="pe-md-3 d-flex align-items-center" :class="'me-md-auto ms-md-auto'">
 
-        </div>
-        <ul class="navbar-nav justify-content-end">
-          <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
-            <a @click="minimizeSidebar" class="p-0 nav-link text-black" id="iconNavbarSidenav">
-              <div class="sidenav-toggler-inner">
-                <i class="sidenav-toggler-line bg-white"></i>
-                <i class="sidenav-toggler-line bg-white"></i>
-                <i class="sidenav-toggler-line bg-white"></i>
-              </div>
-            </a>
-          </li>
-          <li class="nav-item dropdown d-flex align-items-center" :class="'ps-2 pe-2'">
-            <a href="#" class="p-0 nav-link text-black" :class="[showMenu ? 'show' : '']" id="dropdownMenuButton"
-              data-bs-toggle="dropdown" aria-expanded="false" @click="showMenu = !showMenu" @blur="closeMenu">
-              <i class="cursor-pointer fa fa-user text-white"></i>&nbsp;<b class="text-white mx-2"> {{ userName }} </b>
-            </a>
-            <ul class="px-2 py-3 dropdown-menu dropdown-menu-end me-sm-n4" :class="showMenu ? 'show' : ''"
-              aria-labelledby="dropdownMenuButton">
-              <li class="mb-2">
-                <a class="dropdown-item border-radius-md" href="/profile">
-                  <div class="py-1 d-flex">
-                    <div class="my-auto mx-3">
-                      <span style="font-size: 1rem;">
-                        <span style="color: black;">
-                          <i class="fas fa-user"></i>
-                        </span>
-                      </span>
-                    </div>
-                    <div class="d-flex flex-column ml-4 justify-content-center">
-                      <h6 class="mb-1 text-sm font-weight-normal">
-                        My Profile
-                      </h6>
-                    </div>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item border-radius-md" @click="onLogout">
-                  <div class="py-1 d-flex">
-                    <div class="my-auto mx-3">
-                      <span style="font-size: 1rem;">
-                        <span style="color: black;">
-                          <i class="fas fa-running"></i>
-                        </span>
-                      </span>
-                    </div>
-                    <div class="d-flex flex-column ml-4 justify-content-center">
-                      <h6 class="mb-1 text-sm font-weight-normal">
-                        Logout
-                      </h6>
-                    </div>
-                  </div>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <!-- <li class="nav-item dropdown d-flex align-items-center" :class="'ps-2 pe-2'">
-            <a class="p-0 nav-link text-black" :class="[showMenuUser ? 'show' : '']" id="dropdownMenuUser"
-              data-bs-toggle="dropdown" aria-expanded="false" @click="showMenuUse = !showMenuUser"
-              @blur="closeMenuUser">
-              <i class="cursor-pointer fa fa-user"></i>
-            </a>
-            <ul class="px-2 py-3 dropdown-menu dropdown-menu-end me-sm-n4" :class="showMenuUser ? 'show' : ''"
-              aria-labelledby="dropdownMenuUser">
-              <li class="mb-2">
-                <a class="dropdown-item border-radius-md" href="/profile">
-                  <div class="py-1 d-flex">
-                    <div class="my-auto mx-3">
-                      <span style="font-size: 1rem;">
-                        <span style="color: black;">
-                          <i class="fas fa-user"></i>
-                        </span>
-                      </span>
-                    </div>
-                    <div class="d-flex flex-column ml-4 justify-content-center">
-                      <h6 class="mb-1 text-sm font-weight-normal">
-                        My Profile
-                      </h6>
-                    </div>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item border-radius-md" @click="onLogout">
-                  <div class="py-1 d-flex">
-                    <div class="my-auto mx-3">
-                      <span style="font-size: 1rem;">
-                        <span style="color: black;">
-                          <i class="fas fa-running"></i>
-                        </span>
-                      </span>
-                    </div>
-                    <div class="d-flex flex-column ml-4 justify-content-center">
-                      <h6 class="mb-1 text-sm font-weight-normal">
-                        Logout
-                      </h6>
-                    </div>
-                  </div>
-                </a>
-              </li>
-            </ul>
-          </li> -->
-        </ul>
       </div>
+      <ul class="navbar-nav justify-content-end">
+        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+          <a @click="minimizeSidebar" class="p-0 nav-link text-black" id="iconNavbarSidenav">
+            <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line bg-white"></i>
+              <i class="sidenav-toggler-line bg-white"></i>
+              <i class="sidenav-toggler-line bg-white"></i>
+            </div>
+          </a>
+        </li>
+        <li class="nav-item dropdown d-flex align-items-center" :class="'ps-2 pe-2'">
+          <a href="#" class="p-0 nav-link text-black" :class="[showMenu ? 'show' : '']" id="dropdownMenuButton"
+            data-bs-toggle="dropdown" aria-expanded="false" @click="showMenu = !showMenu" @blur="closeMenu">
+            <i class="cursor-pointer fa fa-user text-white"></i>&nbsp;<b class="text-white mx-2"> {{ userName }} </b>
+          </a>
+          <ul class="px-2 py-3 dropdown-menu dropdown-menu-end me-sm-n4" :class="showMenu ? 'show' : ''"
+            aria-labelledby="dropdownMenuButton">
+            <li class="mb-2">
+              <a class="dropdown-item border-radius-md" href="/profile">
+                <div class="py-1 d-flex">
+                  <div class="my-auto mx-3">
+                    <span style="font-size: 1rem;">
+                      <span style="color: black;">
+                        <i class="fas fa-user"></i>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="d-flex flex-column ml-4 justify-content-center">
+                    <h6 class="mb-1 text-sm font-weight-normal">
+                      My Profile
+                    </h6>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li @click="onLogout">
+              <a class="dropdown-item border-radius-md" >
+                <div class="py-1 d-flex">
+                  <div class="my-auto mx-3">
+                    <span style="font-size: 1rem;">
+                      <span style="color: black;">
+                        <i class="fas fa-running"></i>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="d-flex flex-column ml-4 justify-content-center">
+                    <h6 class="mb-1 text-sm font-weight-normal">
+                      Logout
+                    </h6>
+                  </div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
+
 </template>
 
 <style scoped>

@@ -17,6 +17,8 @@ import UserDashboard from "../views/user/Dashboard.vue";
 import ViewCircBook from "../views/user/ViewCircBook.vue";
 import ViewPinjamBuku from "../views/user/ViewPinjamBuku.vue";
 import UserPinjamkan from "../views/user/Pinjamkan.vue";
+import UserPinjamkanKonfirmasi from "../views/user/KonfirmasiPinjam.vue";
+import Status from "../views/user/Status.vue";
 
 const routes = [
   {
@@ -57,8 +59,18 @@ const routes = [
   },
   {
     path: "/pinjamkan",
-    name: "UserPinjamkan",
+    name: "Pinjamkan Buku",
     component: UserPinjamkan,
+  },
+  {
+    path: "/pinjamkan/konfirmasi",
+    name: "Konfirmasi Pinjamkan Buku",
+    component: UserPinjamkanKonfirmasi,
+  },
+  {
+    path: "/status",
+    name: "Status",
+    component: Status,
   },
 
   //ADMIN

@@ -87,7 +87,7 @@ export default {
             </div>
             <div class="product-info p-2">
               <h6 class="text-muted text-light"><a href="#">{{ item.ISBN }}</a></h6>
-              <h6 class="text-uppercase"><a>{{ item.book_title }}</a></h6>
+              <h6 class="text-uppercase text-truncate"><a>{{ item.book_title }}</a></h6>
               <p class="text-black"><b>Pemilik:</b> {{ item.uploader_name }}</p>
               <!-- <div class="d-flex align-items-center">
                 <a class="text-muted"><b>Tahun Terbit: </b>{{ item.year }}</a>

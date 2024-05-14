@@ -104,9 +104,22 @@ export default {
       </li>
       <li v-if="userRole === 'user'" class="nav-item">
         <sidenav-item to="/pinjamkan" :class="getRoute() === 'UserPinjamkan' ? 'active' : ''" navText="Pinjamkan">
-
           <template v-slot:icon>
             <i class="fa fa-book text-primary text-sm opacity-10"></i>
+          </template>
+        </sidenav-item>
+      </li>
+      <li v-if="userRole === 'user'" class="nav-item">
+        <sidenav-item to="/pinjamkan/konfirmasi" :class="getRoute() === 'UserPinjamkanKonfirmasi' ? 'active' : ''" navText="Konfirmasi">
+          <template v-slot:icon>
+            <i class="far fa-check-circle text-success text-sm opacity-10"></i>
+          </template>
+        </sidenav-item>
+      </li>
+      <li v-if="userRole === 'user'" class="nav-item">
+        <sidenav-item to="/status" :class="getRoute() === 'Status' ? 'active' : ''" navText="Status">
+          <template v-slot:icon>
+            <i class="fas fa-info text-info text-sm opacity-10"></i>
           </template>
         </sidenav-item>
       </li>

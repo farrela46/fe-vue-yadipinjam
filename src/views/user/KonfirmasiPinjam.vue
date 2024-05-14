@@ -3,7 +3,7 @@ import axios from "axios";
 import BASE_URL from '@/api/config-api';
 import ArgonPagination from "@/components/ArgonPagination.vue";
 import ArgonPaginationItem from "@/components/ArgonPaginationItem.vue";
-import ArgonButton from "@/components/ArgonButton.vue";
+// import ArgonButton from "@/components/ArgonButton.vue";
 import ArgonInput from "@/components/ArgonInput.vue";
 import moment from 'moment';
 import * as bootstrap from 'bootstrap';
@@ -14,7 +14,7 @@ export default {
   components: {
     ArgonPagination,
     ArgonPaginationItem,
-    ArgonButton,
+    // ArgonButton,
     ArgonInput
   },
   data() {
@@ -232,9 +232,8 @@ export default {
           <div class="col-md-12 col-12">
             <div class="card">
               <div class="card-header pb-0 d-flex justify-content-between align-items-center mb-2">
-                <h6 class="mb-0">List Buku Dipinjamkan</h6>
-                <argon-button data-bs-toggle="modal" data-bs-target="#exampleModal"><i
-                    class="fa fa-plus text-white text-sm opacity-10"></i> Pinjamkan Buku</argon-button>
+                <h6 class="mb-0">List Permintaan Pinjam Buku</h6>
+                
               </div>
               <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">

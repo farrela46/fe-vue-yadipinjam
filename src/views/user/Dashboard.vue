@@ -83,7 +83,7 @@ export default {
             </div>
             <div class="product-info p-2">
               <h6 class="text-muted text-light"><a href="#">{{ item.ISBN }}</a></h6>
-              <h6 class="text-uppercase"><a>{{ item.title }}</a></h6>
+              <h6 class="text-uppercase text-truncate"><a>{{ item.title }}</a></h6>
               <div class="d-flex align-items-center">
                 <a class="text-muted"><b>Tahun Terbit: </b>{{ item.year }}</a>
               </div>
@@ -193,17 +193,6 @@ a {
   transition: 0.5s ease-in;
 }
 
-/* 
-.product-single-card .product-top-area:hover .product-img .first-view {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.product-single-card .product-top-area:hover .product-img .hover-view {
-  opacity: 100%;
-  scale: 1.2;
-} */
 .product-single-card .product-top-area .product-img img {
   width: 250px;
   /* height: 150px;  */

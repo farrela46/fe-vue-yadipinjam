@@ -33,16 +33,22 @@ export default {
           }
         });
         console.log(response);
-        this.showAlert = true;
+        // this.showAlert = true;
         this.$notify({
           type: 'success',
           title: 'Success',
-          text: 'User berhasil dihapus',
+          text: 'Buku berhasil ',
           color: 'green'
         });
         this.retrieveBuku();
       } catch (error) {
         console.error(error);
+        this.$notify({
+          type: 'danger',
+          title: 'Failed',
+          text: 'Anda sudah meminjam buku ini',
+          color: 'green'
+        });
       }
     },
     async retrieveBuku() {
