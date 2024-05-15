@@ -80,19 +80,6 @@ export default {
       }
     },
 
-    getClassForStatus(status) {
-      const statusClassMap = {
-
-        pending: 'pending',
-        confirmed: 'confirmed',
-        overdue: 'overdue',
-        returned: 'returned',
-        checking: 'checking',
-        complete: 'complete'
-      };
-      return statusClassMap[status] || '';
-    },
-
     toggleTab(tab) {
       this.activeTab = tab;
       this.getStatus(tab === 'Semua' ? '' : tab.toLowerCase());
@@ -221,23 +208,23 @@ export default {
                     Semua
                   </div>
                   <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Pending' }"
-                    @click="toggleTab('pending')">
+                    @click="toggleTab('Pending')">
                     Pending
                   </div>
                   <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Confirmed' }"
-                    @click="toggleTab('confirmed')">
+                    @click="toggleTab('Confirmed')">
                     Confirmed
                   </div>
                   <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Overdue' }"
-                    @click="toggleTab('overdue')">
+                    @click="toggleTab('Overdue')">
                     Overdue
                   </div>
                   <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Returned' }"
-                    @click="toggleTab('returned')">
+                    @click="toggleTab('Returned')">
                     Returned
                   </div>
                   <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Checking' }"
-                    @click="toggleTab('checking')">
+                    @click="toggleTab('Checking')">
                     Checking
                   </div>
                   <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Complete' }"
@@ -246,54 +233,6 @@ export default {
                   </div>
                 </div>
               </div>
-              <!-- <div class="col-md-12 bg-white mt-4" style="border-radius: 10px;">
-                <div class="row px-3 py-2">
-                  <div class="col">
-                    <a style=" font-size: 18px;"> No</a>
-                  </div>
-                  <div class="col">
-                    <a style=" font-size: 18px;"> ISBN</a>
-                  </div>
-                  <div class="col">
-                    <a style=" font-size: 18px;"> Title</a>
-                  </div>
-                  <div class="col">
-                    <a style=" font-size: 18px;"> Pemilik</a>
-                  </div>
-                  <div class="col d-flex justify-content-center align-items-center">
-                    <a style=" font-size: 18px;"> Status </a>
-                  </div>
-                  <div class="col d-flex justify-content-center align-items-center">
-                    <a style=" font-size: 18px;"> Action </a>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-12 bg-white mt-2" v-for="(status, index) in status" :key="index"
-                style="cursor: pointer;">
-                <div class="row px-3 ls-transaction" @click="goToTransactionDetail(status.id)">
-                  <div class="col">
-                    <a style="font-size: 18px; font-weight: bold;">{{ index + 1 }}</a>
-                  </div>
-                  <div class="col">
-                    <a style="font-size: 18px;">{{ status.ISBN }}</a>
-                  </div>
-                  <div class="col">
-                    <a style="font-size: 18px;">{{ status.title }}</a>
-                  </div>
-                  <div class="col">
-                    <a style="font-size: 18px;">{{ status.username }}</a>
-                  </div>
-                  <div class="col d-flex justify-content-center align-items-center">
-                    <a :class="getClassForStatus(status.status)" style="font-size: 18px;">{{ status.status
-                      }}</a>
-                  </div>
-                  <div class="col d-flex justify-content-center align-items-center">
-                    <v-icon size="large" class="me-2" @click.stop="editStatus(index)" color="blue">
-                      mdi-pencil-circle-outline
-                    </v-icon>
-                  </div>
-                </div>
-              </div> -->
             </div>
             <div class="card  mt-2 pb-2">
               <div class="table-responsive p-0">
