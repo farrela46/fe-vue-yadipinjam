@@ -343,9 +343,6 @@ export default {
                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                           Status
                         </th>
-                        <!-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                          Tahun Terbit
-                        </th> -->
                         <th class="text-left text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                           Aksi</th>
                       </tr>

@@ -4,7 +4,7 @@ import BASE_URL from '@/api/config-api';
 import ArgonPagination from "@/components/ArgonPagination.vue";
 import ArgonPaginationItem from "@/components/ArgonPaginationItem.vue";
 // import ArgonButton from "@/components/ArgonButton.vue";
-import ArgonInput from "@/components/ArgonInput.vue";
+// import ArgonInput from "@/components/ArgonInput.vue";
 import moment from 'moment';
 import * as bootstrap from 'bootstrap';
 
@@ -15,12 +15,11 @@ export default {
     ArgonPagination,
     ArgonPaginationItem,
     // ArgonButton,
-    ArgonInput
+    // ArgonInput
   },
   data() {
     return {
-      bukus: [],
-      users_edit: [],
+      status: [],
       searchIsbn: '',
       buku: {
         ISBN: '',
@@ -31,7 +30,6 @@ export default {
         tahun_terbit: '',
         harga: '',
       },
-      selectedFiles: [],
       loading: false,
       loadingRegist: false,
       dialog: false,
@@ -41,15 +39,11 @@ export default {
     };
   },
   computed: {
-    statusOptions() {
-      return ['proccess', 'canceled', 'shipping', 'received', 'unpaid'];
-    },
-    filteredTransactions() {
-      if (this.selectedTab === 'Semua') {
-        return this.transactions;
-      } else {
-        return this.transactions.filter(transaction => transaction.status === this.selectedTab);
+    filteredStatus() {
+      if (this.activeTab === 'Semua') {
+        return this.status;
       }
+      return this.status.filter(item => item.status.toLowerCase() === this.activeTab.toLowerCase());
     }
   },
   methods: {
@@ -66,39 +60,42 @@ export default {
     formatDate(data_date) {
       return moment.utc(data_date).format('YYYY-MM-DD')
     },
-    async retrieveBuku() {
-      this.loading = true;
-      try {
-        const response = await axios.get(`${BASE_URL}/book/circulatedBook`, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem('access_token')
-          }
-        });
-        this.bukus = response.data.data;
-      } catch (error) {
-        console.error(error);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async getTransactions(status = '') {
-      this.showDialog = true
+    async getStatus(status = '') {
+      this.showDialog = true;
       try {
         const token = localStorage.getItem('access_token');
-        const response = await axios.get(BASE_URL + '/all-transactions', {
+        const response = await axios.get(`${BASE_URL}/rent/renter-status`, {
           params: {
-            status: status
+            type: status
           },
           headers: {
             Authorization: 'Bearer ' + token
           }
         });
-        this.transactions = response.data;
+        this.status = response.data.data;
       } catch (error) {
         console.error('Error fetching transactions:', error);
       } finally {
-        this.showDialog = false
+        this.showDialog = false;
       }
+    },
+
+    getClassForStatus(status) {
+      const statusClassMap = {
+
+        pending: 'pending',
+        confirmed: 'confirmed',
+        overdue: 'overdue',
+        returned: 'returned',
+        checking: 'checking',
+        complete: 'complete'
+      };
+      return statusClassMap[status] || '';
+    },
+
+    toggleTab(tab) {
+      this.activeTab = tab;
+      this.getStatus(tab === 'Semua' ? '' : tab.toLowerCase());
     },
     async onSubmit() {
       try {
@@ -182,16 +179,6 @@ export default {
         console.error(error);
       }
     },
-    clearForm() {
-      this.buku.ISBN = '';
-      this.buku.judul = '';
-      this.buku.deskripsi = '';
-      this.buku.penulis = '';
-      this.buku.penerbit = '';
-      this.buku.tahun_terbit = '';
-      this.buku.harga = '';
-      this.selectedFiles = null
-    },
     openDeleteConfirmation(id) {
       this.selectedUserId = id;
       let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteConfirmationModal'))
@@ -213,32 +200,9 @@ export default {
       let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
       modal.show();
     },
-    toggleTab(tab) {
-      this.activeTab = tab;
-
-      switch (tab) {
-        case 'Belum Bayar':
-          this.getTransactions('unpaid');
-          break;
-        case 'Proses':
-          this.getTransactions('proccess');
-          break;
-        case 'Dikirim':
-          this.getTransactions('shipping');
-          break;
-        case 'Diterima':
-          this.getTransactions('received');
-          break;
-        case 'Dibatalkan':
-          this.getTransactions('canceled');
-          break;
-        default:
-          this.getTransactions(); // For default tab 'Semua', no status parameter is passed
-      }
-    },
   },
   mounted() {
-    this.retrieveBuku();
+    this.getStatus('');
   },
 };
 </script>
@@ -249,7 +213,7 @@ export default {
       <div class="col-12">
         <div class="row">
           <div class="col-md-12 col-12">
-            <div class="row">
+            <div class="row px-2">
               <div class="col-md-12 bg-white" style="border-radius: 10px;">
                 <div class="row">
                   <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Semua' }"
@@ -257,32 +221,44 @@ export default {
                     Semua
                   </div>
                   <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Pending' }"
-                    @click="toggleTab('Belum Bayar')">
+                    @click="toggleTab('pending')">
                     Pending
                   </div>
-                  <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'On Going' }"
-                    @click="toggleTab('Proses')">
-                    On Going
+                  <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Confirmed' }"
+                    @click="toggleTab('confirmed')">
+                    Confirmed
                   </div>
-                  <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Finish' }"
-                    @click="toggleTab('Dikirim')">
-                    Finish
+                  <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Overdue' }"
+                    @click="toggleTab('overdue')">
+                    Overdue
+                  </div>
+                  <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Returned' }"
+                    @click="toggleTab('returned')">
+                    Returned
+                  </div>
+                  <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Checking' }"
+                    @click="toggleTab('checking')">
+                    Checking
+                  </div>
+                  <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Complete' }"
+                    @click="toggleTab('Complete')">
+                    Complete
                   </div>
                 </div>
               </div>
-              <div class="col-md-12 bg-white mt-4" style="border-radius: 10px;">
+              <!-- <div class="col-md-12 bg-white mt-4" style="border-radius: 10px;">
                 <div class="row px-3 py-2">
                   <div class="col">
                     <a style=" font-size: 18px;"> No</a>
                   </div>
                   <div class="col">
+                    <a style=" font-size: 18px;"> ISBN</a>
+                  </div>
+                  <div class="col">
                     <a style=" font-size: 18px;"> Title</a>
                   </div>
                   <div class="col">
-                    <a style=" font-size: 18px;"> Author</a>
-                  </div>
-                  <div class="col">
-                    <a style=" font-size: 18px;"> publisher</a>
+                    <a style=" font-size: 18px;"> Pemilik</a>
                   </div>
                   <div class="col d-flex justify-content-center align-items-center">
                     <a style=" font-size: 18px;"> Status </a>
@@ -292,31 +268,100 @@ export default {
                   </div>
                 </div>
               </div>
-              <div class="col-md-12 bg-white mt-2" v-for="(transaction, index) in transactions" :key="index"
+              <div class="col-md-12 bg-white mt-2" v-for="(status, index) in status" :key="index"
                 style="cursor: pointer;">
-                <div class="row px-3 ls-transaction" @click="goToTransactionDetail(transaction.id)">
+                <div class="row px-3 ls-transaction" @click="goToTransactionDetail(status.id)">
                   <div class="col">
-                    <a style="font-size: 18px; font-weight: bold;">#{{ transaction.id }}</a>
+                    <a style="font-size: 18px; font-weight: bold;">{{ index + 1 }}</a>
                   </div>
                   <div class="col">
-                    <a style="font-size: 18px;">{{ transaction.user.name }}</a>
+                    <a style="font-size: 18px;">{{ status.ISBN }}</a>
                   </div>
                   <div class="col">
-                    <a style="font-size: 18px;">Rp. {{ formatPrice(transaction.total) }}</a>
+                    <a style="font-size: 18px;">{{ status.title }}</a>
                   </div>
                   <div class="col">
-                    <a style="font-size: 18px;">{{ formatDate(transaction.created_at) }}</a>
+                    <a style="font-size: 18px;">{{ status.username }}</a>
                   </div>
                   <div class="col d-flex justify-content-center align-items-center">
-                    <a :class="getClassForStatus(transaction.status)" style="font-size: 18px;">{{ transaction.status
+                    <a :class="getClassForStatus(status.status)" style="font-size: 18px;">{{ status.status
                       }}</a>
                   </div>
-                  <div class="col d-flex justify-content-center align-items-cente">
+                  <div class="col d-flex justify-content-center align-items-center">
                     <v-icon size="large" class="me-2" @click.stop="editStatus(index)" color="blue">
                       mdi-pencil-circle-outline
                     </v-icon>
                   </div>
                 </div>
+              </div> -->
+            </div>
+            <div class="card  mt-2 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-center text-secondary text-xxs font-weight-bolder opacity-7">
+                        No
+                      </th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Title
+                      </th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Pemilik
+                      </th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Mulai Peminjaman
+                      </th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Status
+                      </th>
+                      <th class="text-left text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(status, index) in status" :key="index">
+                      <td>
+                        <div class="px-2 py-1">
+                          <div class="d-flex justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ index + 1 }}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ status.title }}</h6>
+                            <p class="text-xs text-secondary mb-0">
+                              {{ status.ISBN }}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="align-left text-center">
+                        <span class="text-secondary text-xs font-weight-bold">{{ status.username }}</span>
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">{{ formatDate(status.start_date) }}</span>
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">
+                          <v-chip>
+                            {{ status.status }}
+                          </v-chip>
+                          </span>
+                      </td>
+                      <td class="align-middle">
+                        <span class="mx-2" style="font-size: 1rem; cursor: pointer;"
+                          @click="activate(buku.circulated_book_id)">
+                          <span style="color: green;">
+                            <i class="fas fa-paper-plane"></i>
+                          </span>
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -339,29 +384,7 @@ export default {
             </div>
           </div>
         </div>
-        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title text-black" id="userModalLabel">Edit User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                  id="closeModal"></button>
-              </div>
-              <form role="form" @submit.prevent="userUpdate">
-                <div class="modal-body">
-                  <argon-input type="text" placeholder="Name" v-model="users_edit.name" />
-                  <argon-input type="email" placeholder="Email" v-model="users_edit.email" />
-                  <argon-input type="password" placeholder="Password" v-model="users_edit.password" />
-                </div>
-                <v-progress-linear v-if="loadingRegist" indeterminate></v-progress-linear>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+
         <div class="row mt-2">
           <argon-pagination>
             <argon-pagination-item prev />
@@ -381,7 +404,7 @@ export default {
   padding-bottom: 20px;
 }
 
-.proccess {
+.pending {
   padding-right: 5px;
   padding-left: 5px;
   border-radius: 5px;
@@ -391,27 +414,17 @@ export default {
   background-color: yellow;
 }
 
-.shipping {
+.confirmed {
   padding-right: 5px;
   padding-left: 5px;
   border-radius: 5px;
   color: black;
   font-weight: 600;
   text-decoration: none;
-  background-color: yellow;
+  background-color: rgb(120, 211, 0);
 }
 
-.unpaid {
-  padding-right: 5px;
-  padding-left: 5px;
-  border-radius: 5px;
-  color: white;
-  font-weight: 600;
-  text-decoration: none;
-  background-color: orange;
-}
-
-.canceled {
+.overdue {
   padding-right: 5px;
   padding-left: 5px;
   border-radius: 5px;
@@ -421,7 +434,17 @@ export default {
   background-color: red;
 }
 
-.received {
+.returned {
+  padding-right: 5px;
+  padding-left: 5px;
+  border-radius: 5px;
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  background-color: orange;
+}
+
+.checking {
   padding-right: 5px;
   padding-left: 5px;
   border-radius: 5px;
@@ -429,6 +452,16 @@ export default {
   font-weight: bold;
   text-decoration: none;
   background-color: lightgreen;
+}
+
+.complete {
+  padding-right: 5px;
+  padding-left: 5px;
+  border-radius: 5px;
+  color: 600;
+  font-weight: bold;
+  text-decoration: none;
+  background-color: green;
 }
 
 .tablist {
@@ -441,6 +474,6 @@ export default {
 }
 
 .tab-active {
-  border-bottom: 5px solid #D0011B;
+  border-bottom: 5px solid #DE5B54;
 }
 </style>

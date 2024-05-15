@@ -56,7 +56,7 @@ export default {
     async retrieveBuku() {
       this.loading = true;
       try {
-        const response = await axios.get(`${BASE_URL}/book/circulatedBook`, {
+        const response = await axios.get(`${BASE_URL}/rent/confirmOwner`, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem('access_token')
           }
@@ -104,62 +104,27 @@ export default {
       }
     },
 
-    async onSubmit() {
-      try {
-        this.loadingRegist = true;
-        const year = this.extractYear(this.buku.tahun_terbit);
-
-        const formData = new FormData();
-        formData.append('ISBN', this.buku.ISBN);
-        formData.append('authors', this.buku.penulis);
-        formData.append('publisher', this.buku.penerbit);
-        formData.append('title', this.buku.judul);
-        formData.append('description', this.buku.deskripsi);
-        formData.append('price', this.buku.harga);
-        formData.append('year', year);
-
-        this.selectedFiles.forEach((file, index) => {
-          formData.append('image', file);
-          index;
-        });
-
-        console.log('FormData before sending:', formData);
-
-        const response = await axios.post(`${BASE_URL}/book/upload`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-          },
-        });
-
-        console.log('Upload successful:', response.data);
-
-        this.closeModal();
-        this.clearForm();
-        this.retrieveBuku();
-      } catch (error) {
-        console.error('Error uploading book:', error);
-      } finally {
-        this.loadingRegist = false;
-      }
-    },
-
     handleFileChange(event) {
       const fileInput = event.target;
       this.selectedFiles = Array.from(fileInput.files);
     },
-    async activate(id) {
+    async accept(id) {
       try {
-        const response = await axios.get(`${BASE_URL}/book/circulated/activated/` + id, {
+        const formData = new FormData();
+        formData.append('rent_ID', id);
+
+        const response = await axios.post(`${BASE_URL}/rent/confirmBorrow`, formData, {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+            'Content-Type': 'multipart/form-data',
           },
         });
-        console.log(response)
+        this.retrieveBuku();
+        console.log(response);
         this.$notify({
           type: 'success',
           title: 'Success',
-          text: 'Buku siap dipinjamkan',
+          text: 'Buku dipinjamkan!',
           color: 'green'
         });
         this.retrieveBuku();
@@ -233,87 +198,7 @@ export default {
             <div class="card">
               <div class="card-header pb-0 d-flex justify-content-between align-items-center mb-2">
                 <h6 class="mb-0">List Permintaan Pinjam Buku</h6>
-                
-              </div>
-              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title text-black" id="userModalLabel">Informasi Buku</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal"
-                        @click="handleclose"></button>
-                    </div>
-                    <form role="form" @submit.prevent="onSubmit">
-                      <div class="modal-body">
-                        <div class="row">
-                          <div class="col-4">
-                            <h3>Upload Buku Anda</h3>
-                            <p>Buku yang kamu upload akan menjadi publik, dan orang lain yang melihat dapat meminjam
-                              buku yang kamu upload</p>
-                            <div class="row">
-                              <div class="col">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                  @click="handleclose">Close</button>
-                              </div>
-                              <div class="col">
-                                <button type="submit" class="btn btn-primary">Upload</button>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-8">
-                            <div class="row">
-                              <a>ISBN Buku</a>
-                              <argon-input type="text" icon="fas fa-search" iconDir="left" placeholder="Cari ISBN Buku"
-                                v-model="buku.ISBN" @input="fetchBookByISBN" />
-                            </div>
-                            <div class="row">
-                              <a>ISBN Buku</a>
-                              <argon-input type="text" placeholder="ISBN Buku" v-model="buku.ISBN"
-                                @input="fetchBookByISBN" />
-                            </div>
-                            <div class="row">
-                              <a>Judul Buku</a>
-                              <argon-input type="text" placeholder="Judul Buku " v-model="buku.judul" />
-                            </div>
-                            <div class="row mb-2 px-2">
-                              <a>Foto Buku</a>
-                              <input type="file" class="form-control" ref="fileInput" @change="handleFileChange"
-                                multiple>
 
-                            </div>
-                            <div class="row">
-                              <a>Kondisi Buku</a>
-                              <argon-input type="text" size="lg" placeholder="Kondisi Buku" v-model="buku.deskripsi" />
-                            </div>
-                            <div class="row">
-                              <a>Penulis</a>
-                              <argon-input type="text" placeholder="Penulis" v-model="buku.penulis" />
-                            </div>
-                            <div class="row">
-                              <a>Penerbit</a>
-                              <argon-input type="text" placeholder="Penerbit" v-model="buku.penerbit" />
-                            </div>
-                            <div class="row">
-                              <a>Tahun Terbit</a>
-                              <argon-input type="date" placeholder="Tanggal Terbit" v-model="buku.tahun_terbit" />
-                            </div>
-                            <div class="row">
-                              <a>Harga Buku</a>
-                              <argon-input type="text" placeholder="Harga Buku" v-model="buku.harga" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <v-progress-linear v-if="loadingRegist" indeterminate></v-progress-linear>
-                      <!-- <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                          @click="handleclose">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                      </div> -->
-                    </form>
-                  </div>
-                </div>
               </div>
               <div class="card-body px-0 pt-0 pb-2">
                 <div v-if="loading" class="divider">
@@ -334,10 +219,15 @@ export default {
                         </th>
                         <th
                           class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                          Author
+                          Peminjam
                         </th>
-                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                          Penerbit
+                        <th
+                          class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                          Mulai
+                        </th>
+                        <th
+                          class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                          Selesai
                         </th>
                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                           Status
@@ -350,7 +240,7 @@ export default {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(buku, index) in bukus" :key="index">
+                      <tr v-for="(buku, index) in bukus" :key="buku.id">
                         <td>
                           <div class="px-2 py-1">
                             <div class="d-flex justify-content-center">
@@ -361,7 +251,7 @@ export default {
                         <td>
                           <div class="d-flex px-2 py-1">
                             <div class="d-flex flex-column justify-content-center">
-                              <h6 class="mb-0 text-sm">{{ buku.book_title }}</h6>
+                              <h6 class="mb-0 text-sm">{{ buku.title }}</h6>
                               <p class="text-xs text-secondary mb-0">
                                 {{ buku.ISBN }}
                               </p>
@@ -369,31 +259,26 @@ export default {
                           </div>
                         </td>
                         <td class="align-left text-center">
-                          <span class="text-secondary text-xs font-weight-bold">{{ buku.authors }}</span>
+                          <span class="text-secondary text-xs font-weight-bold">{{ buku.peminjam }}</span>
                         </td>
-                        <td class="align-middle text-center">
-                          <span class="text-secondary text-xs font-weight-bold">{{ buku.publisher }}</span>
+                        <td class="align-left text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{ formatDate(buku.tanggal_mulai)
+                            }}</span>
+                        </td>
+                        <td class="align-left text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{ formatDate(buku.tanggal_selesai)
+                            }}</span>
                         </td>
                         <td class="align-middle text-center">
                           <span class="text-secondary text-xs font-weight-bold">{{ buku.status }}</span>
                         </td>
-                        <td class="align-middle">
+                        <td class=" align-middle">
                           <span class="mx-2" style="font-size: 1rem; cursor: pointer;"
-                            @click="activate(buku.circulated_book_id)">
+                            @click="accept(buku.id)">
                             <span style="color: green;">
-                              <i class="fas fa-paper-plane"></i>
+                              <i class="fas fa-check-circle"></i>
                             </span>
                           </span>
-                          <!-- <span class="mx-3" style="font-size: 1rem; cursor: pointer;" @click="editUser(user.id)">
-                            <span style="color: green;">
-                              <i class="fa fa-pencil-square-o"></i>
-                            </span>
-                          </span>
-                          <span style="font-size: 1rem; cursor: pointer;" @click="openDeleteConfirmation(user.id)">
-                            <span style="color: red;">
-                              <i class="fa fa-trash"></i>
-                            </span>
-                          </span> -->
                         </td>
                       </tr>
                     </tbody>
