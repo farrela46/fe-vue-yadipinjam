@@ -139,6 +139,12 @@ export default {
             'Content-Type': 'multipart/form-data',
           },
         });
+        this.$notify({
+          type: 'success',
+          title: 'Success',
+          text: 'Request pengembalian terkirim!',
+          color: 'green'
+        });
         this.retrieveBuku();
         console.log(response);
         this.$notify({
@@ -296,12 +302,16 @@ export default {
                         </span>
                       </td>
                       <td class="align-middle">
-                        <span v-if="status.status === 'confirmed'" class="mx-2"
-                          style="font-size: 1rem; cursor: pointer;" @click="returned(status.id)">
-                          <span style="color: green;">
-                            <i class="fas fa-paper-plane"></i>
-                          </span>
-                        </span>
+                        <v-tooltip text="Kembalikan Buku" location="top">
+                          <template v-slot:activator="{ props }">
+                            <span v-bind="props" v-if="status.status === 'confirmed'" class="mx-2"
+                              style="font-size: 1rem; cursor: pointer;" @click="returned(status.id)">
+                              <span style="color: green;">
+                                <i class="fas fa-undo-alt"></i>
+                              </span>
+                            </span>
+                          </template>
+                        </v-tooltip>
                       </td>
                     </tr>
                   </tbody>

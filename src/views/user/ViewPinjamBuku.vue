@@ -37,7 +37,7 @@ export default {
         this.$notify({
           type: 'success',
           title: 'Success',
-          text: 'Buku berhasil ',
+          text: 'Request pinjam telah dikirim',
           color: 'green'
         });
         this.retrieveBuku();
