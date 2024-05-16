@@ -132,6 +132,30 @@ export default {
         console.error(error);
       }
     },
+    async confirmReturn(id) {
+      try {
+        const formData = new FormData();
+        formData.append('rent_ID', id);
+
+        const response = await axios.post(`${BASE_URL}/rent/confirmReturn`, formData, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        this.retrieveBuku();
+        console.log(response);
+        this.$notify({
+          type: 'success',
+          title: 'Success',
+          text: 'Buku telah kembali',
+          color: 'green'
+        });
+        this.retrieveBuku();
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async deleteUser(id) {
       try {
         const response = await axios.delete(`${BASE_URL}/deleteUser/` + id, {
@@ -273,12 +297,31 @@ export default {
                           <span class="text-secondary text-xs font-weight-bold">{{ buku.status }}</span>
                         </td>
                         <td class=" align-middle">
-                          <span class="mx-2" style="font-size: 1rem; cursor: pointer;"
-                            @click="accept(buku.id)">
-                            <span style="color: green;">
-                              <i class="fas fa-check-circle"></i>
-                            </span>
-                          </span>
+
+                          <div v-if="buku.status === 'pending'">
+                            <v-tooltip text="Konfirmasi Pinjam" location="top">
+                              <template v-slot:activator="{ props }">
+                                <span class="mx-2" v-bind="props" style="font-size: 1rem; cursor: pointer;"
+                                  @click="accept(buku.id)">
+                                  <span style="color: lawngreen;">
+                                    <i class="fas fa-check-circle"></i>
+                                  </span>
+                                </span>
+                              </template>
+                            </v-tooltip>
+                          </div>
+                          <div v-else-if="buku.status === 'returned'">
+                            <v-tooltip text="Konfirmasi Pengembalian" location="top">
+                              <template v-slot:activator="{ props }">
+                                <span class="mx-2" v-bind="props" style="font-size: 1rem; cursor: pointer;"
+                                  @click="confirmReturn(buku.id)">
+                                  <span style="color: blue;">
+                                    <i class="fas fa-check-circle"></i>
+                                  </span>
+                                </span>
+                              </template>
+                            </v-tooltip>
+                          </div>
                         </td>
                       </tr>
                     </tbody>

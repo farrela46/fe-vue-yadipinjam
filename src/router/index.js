@@ -7,7 +7,8 @@ import RTL from "../views/Rtl.vue";
 import Profile from "../views/Profile.vue";
 import Signup from "../views/Signup.vue";
 import LandingPage from "../views/LandingPage.vue";
-import Dashboard from "../views/admin/Dashboard.vue";
+import AdminDashboard from "../views/admin/Dashboard.vue";
+import ManageProducts from "../views/admin/ManageProducts.vue";
 import ManageUsers from "../views/admin/ManageUsers.vue";
 import Login from "../views/Loginn.vue";
 import Signin from "../views/Signin.vue";
@@ -76,8 +77,13 @@ const routes = [
   //ADMIN
   {
     path: "/admin/dashboard",
-    name: "Dashboard",
-    component: Dashboard,
+    name: "Admin Dashboard",
+    component: AdminDashboard,
+  },
+  {
+    path: "/admin/products",
+    name: "Manage Products",
+    component: ManageProducts,
   },
   {
     path: "/admin/manageusers",

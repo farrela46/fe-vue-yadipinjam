@@ -341,6 +341,9 @@ export default {
                           Penerbit
                         </th>
                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                          Verif
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                           Status
                         </th>
                         <th class="text-left text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -371,6 +374,9 @@ export default {
                         </td>
                         <td class="align-middle text-center">
                           <span class="text-secondary text-xs font-weight-bold">{{ buku.publisher }}</span>
+                        </td>
+                        <td class="align-middle text-center">
+<v-chip color="green">Verified</v-chip>
                         </td>
                         <td class="align-middle text-center">
                           <span class="text-secondary text-xs font-weight-bold">{{ buku.status }}</span>

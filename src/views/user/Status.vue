@@ -128,21 +128,26 @@ export default {
       const fileInput = event.target;
       this.selectedFiles = Array.from(fileInput.files);
     },
-    async activate(id) {
+    async returned(id) {
       try {
-        const response = await axios.get(`${BASE_URL}/book/circulated/activated/` + id, {
+        const formData = new FormData();
+        formData.append('rent_ID', id);
+
+        const response = await axios.post(`${BASE_URL}/rent/return`, formData, {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+            'Content-Type': 'multipart/form-data',
           },
         });
-        console.log(response)
+        this.retrieveBuku();
+        console.log(response);
         this.$notify({
           type: 'success',
           title: 'Success',
-          text: 'Buku siap dipinjamkan',
+          text: 'Buku dipinjamkan!',
           color: 'green'
         });
-        this.retrieveBuku();
+        this.getStatus('');
       } catch (error) {
         console.error(error);
       }
@@ -288,11 +293,11 @@ export default {
                           <v-chip>
                             {{ status.status }}
                           </v-chip>
-                          </span>
+                        </span>
                       </td>
                       <td class="align-middle">
-                        <span class="mx-2" style="font-size: 1rem; cursor: pointer;"
-                          @click="activate(buku.circulated_book_id)">
+                        <span v-if="status.status === 'confirmed'" class="mx-2"
+                          style="font-size: 1rem; cursor: pointer;" @click="returned(status.id)">
                           <span style="color: green;">
                             <i class="fas fa-paper-plane"></i>
                           </span>
