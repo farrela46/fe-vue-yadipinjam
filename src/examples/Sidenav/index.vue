@@ -43,8 +43,8 @@ export default {
         aria-hidden="true" id="iconSidenav"></i>
 
       <router-link class="m-0 navbar-brand" to="/">
-        <img :src="require('@/assets/img/logo-ct-dark.png')" class="navbar-brand-img h-100" alt="main_logo" />
-        <span class="ms-2 font-weight-bold me-2">YaDipinjam</span>
+        <!-- <img :src="require('@/assets/img/logo-ct-dark.png')" class="navbar-brand-img h-100" alt="main_logo" /> -->
+        <span class="ms-2 font-weight-bold me-2 text-lg">YaDipinjam</span>
       </router-link>
 
     </div>

@@ -56,34 +56,20 @@ export default {
         </sidenav-item>
       </li>
       <li v-if="userRole === 'admin'" class="nav-item">
-        <sidenav-item to="/admin/products" :class="getRoute() === 'manage products' ? 'active' : ''" navText="Manage Products">
+        <sidenav-item to="/admin/verifikasi" :class="getRoute() === 'manage verifikasi' ? 'active' : ''" navText="Verifikasi Buku">
           <template v-slot:icon>
             <i class="fa fa-book text-success text-sm opacity-10"></i>
           </template>
         </sidenav-item>
       </li>
-      <li v-if="userRole === 'admin'" class="nav-item">
+      <!-- <li v-if="userRole === 'admin'" class="nav-item">
         <sidenav-item to="/admin/manageusers" :class="getRoute() === 'manage users' ? 'active' : ''" navText="Manage Users">
           <template v-slot:icon>
             <i class="fas fa-users text-success text-sm opacity-10"></i>
           </template>
         </sidenav-item>
-      </li>
-      <li v-if="userRole === 'admin'" class="nav-item">
-        <sidenav-item to="/tables" :class="getRoute() === 'tables' ? 'active' : ''" navText="Tables">
-
-          <template v-slot:icon>
-            <i class="ni ni-calendar-grid-58 text-warning text-sm opacity-10"></i>
-          </template>
-        </sidenav-item>
-      </li>
-      <li v-if="userRole === 'admin'" class="nav-item">
-        <sidenav-item to="/billing" :class="getRoute() === 'billing' ? 'active' : ''" navText="Billing">
-          <template v-slot:icon>
-            <i class="ni ni-credit-card text-success text-sm opacity-10"></i>
-          </template>
-        </sidenav-item>
-      </li>
+      </li> -->
+      
       <!-- <li v-if="userRole === 'ADMIN'" class="nav-item">
         <sidenav-item to="/virtual-reality" :class="getRoute() === 'virtual-reality' ? 'active' : ''"
           navText="Virtual Reality">

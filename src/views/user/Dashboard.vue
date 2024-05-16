@@ -18,7 +18,7 @@ export default {
     getImageLink(link) {
       return link ? link : require('@/assets/img/noPic.png');
     },
-    
+
     formatPrice(price) {
       const numericPrice = parseFloat(price);
       return numericPrice.toLocaleString('id-ID');
@@ -37,7 +37,7 @@ export default {
 
         this.products = response.data.data;
 
-  
+
       } catch (error) {
         console.error(error);
       } finally {
@@ -56,8 +56,14 @@ export default {
       </div>
     </div>
     <div class="utama" v-else>
+      <div class="row" style="height: 60px;">
+        <form class="search-container" @submit.prevent="searchProduct" style="max-width: 350px;">
+          <div class="input-group"><span class="input-group-text text-body"><i class="fas fa-search"
+                aria-hidden="true"></i></span><input type="text" class="form-control" placeholder="Search Product"
+              @input="searchProduct" v-model="searchQuery"></div>
+        </form>
+      </div>
       <div class="row mt-3" v-if="products && products.length > 0">
-
         <router-link :to="'/pinjam/' + item.ISBN" class="col-md-2 mt-2 mb-2 col-6" v-for="item in products"
           :key="item.id">
           <div class="product-single-card shadow">

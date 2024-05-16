@@ -8,7 +8,7 @@ import Profile from "../views/Profile.vue";
 import Signup from "../views/Signup.vue";
 import LandingPage from "../views/LandingPage.vue";
 import AdminDashboard from "../views/admin/Dashboard.vue";
-import ManageProducts from "../views/admin/ManageProducts.vue";
+import ManageVerifikasi from "../views/admin/ManageVerifikasi.vue";
 import ManageUsers from "../views/admin/ManageUsers.vue";
 import Login from "../views/Loginn.vue";
 import Signin from "../views/Signin.vue";
@@ -81,9 +81,9 @@ const routes = [
     component: AdminDashboard,
   },
   {
-    path: "/admin/products",
-    name: "Manage Products",
-    component: ManageProducts,
+    path: "/admin/Verifikasi",
+    name: "Verifikasi Buku",
+    component: ManageVerifikasi,
   },
   {
     path: "/admin/manageusers",
