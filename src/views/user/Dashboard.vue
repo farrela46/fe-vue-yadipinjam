@@ -8,17 +8,33 @@ export default {
   data() {
     return {
       products: [],
-      loadingAPI: false
+      loadingAPI: false,
+      searchQuery: '',
     };
   },
   mounted() {
-    this.retrieveBuku();
+    this.searchProduct();
   },
   methods: {
     getImageLink(link) {
       return link ? link : require('@/assets/img/noPic.png');
     },
-
+    async searchProduct() {
+      try {
+        const token = localStorage.getItem('access_token');
+        const response = await axios.get(`${BASE_URL}/book/search`, {
+          params: {
+            search: this.searchQuery
+          },
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
+        this.products = response.data.data;
+      } catch (error) {
+        console.error('Error searching transactions:', error);
+      }
+    },
     formatPrice(price) {
       const numericPrice = parseFloat(price);
       return numericPrice.toLocaleString('id-ID');

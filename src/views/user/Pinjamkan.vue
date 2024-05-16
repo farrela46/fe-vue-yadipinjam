@@ -376,7 +376,7 @@ export default {
                           <span class="text-secondary text-xs font-weight-bold">{{ buku.publisher }}</span>
                         </td>
                         <td class="align-middle text-center">
-<v-chip color="green">Verified</v-chip>
+                          <v-chip color="green">{{buku.verified}}</v-chip>
                         </td>
                         <td class="align-middle text-center">
                           <span class="text-secondary text-xs font-weight-bold">{{ buku.status }}</span>
