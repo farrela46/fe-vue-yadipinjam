@@ -54,7 +54,7 @@ export default {
 
         if (role === 'admin') {
           localStorage.setItem('access_token', response.data.data.token.token);
-          this.$router.push('/admin/dashboard');
+          this.$router.push('/admin/verifikasi');
           console.log('login success;')
         } else if (role === 'user') {
           localStorage.setItem('access_token', response.data.data.token.token);

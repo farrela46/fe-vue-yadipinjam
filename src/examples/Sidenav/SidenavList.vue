@@ -48,13 +48,13 @@ export default {
 <template>
   <div class="collapse navbar-collapse w-auto h-auto h-100" id="sidenav-collapse-main">
     <ul class="navbar-nav">
-      <li v-if="userRole === 'admin'" class="nav-item">
+      <!-- <li v-if="userRole === 'admin'" class="nav-item">
         <sidenav-item to="/admin/dashboard" :class="getRoute() === 'dashboard' ? 'active' : ''" navText="Dashboard">
           <template v-slot:icon>
             <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
           </template>
         </sidenav-item>
-      </li>
+      </li> -->
       <li v-if="userRole === 'admin'" class="nav-item">
         <sidenav-item to="/admin/verifikasi" :class="getRoute() === 'manage verifikasi' ? 'active' : ''" navText="Verifikasi Buku">
           <template v-slot:icon>

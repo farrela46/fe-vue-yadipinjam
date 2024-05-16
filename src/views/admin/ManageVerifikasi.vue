@@ -199,7 +199,7 @@ export default {
                               <i class="fas fa-eye"></i>
                             </span>
                           </span> -->
-                          <v-tooltip text="Verifikasi Buku" location="end">
+                          <v-tooltip text="Verifikasi Buku" location="top">
                             <template v-slot:activator="{ props }">
                               <span v-if="buku.verified === 'unverified'" class="mx-2" v-bind="props" style="font-size: 1rem; cursor: pointer;"
                                 @click="verified(buku.ISBN)">
