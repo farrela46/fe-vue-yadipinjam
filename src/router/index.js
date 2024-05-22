@@ -86,7 +86,7 @@ const routes = [
     component: ManageVerifikasi,
   },
   {
-    path: "/admin/manageusers",
+    path: "/admin/users",
     name: "Manage Users",
     component: ManageUsers,
   },

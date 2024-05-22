@@ -43,12 +43,12 @@ export default {
     async getAllUser() {
       this.loading = true;
       try {
-        const response = await axios.get(`${BASE_URL}/getUser`, {
+        const response = await axios.get(`${BASE_URL}/auth/index`, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem('access_token')
           }
         });
-        this.users = response.data;
+        this.users = response.data.data;
       } catch (error) {
         console.error(error);
       } finally {

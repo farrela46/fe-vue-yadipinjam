@@ -37,9 +37,25 @@ export default {
       dialog: false,
       showModal: false,
       selectedUserId: null,
+      showDialog: false
     };
   },
+  computed: {
+    formattedHarga: {
+      get() {
+        return this.buku.harga.toLocaleString('id-ID');
+      },
+      set(value) {
+        const numericValue = parseInt(value.replace(/\./g, ''), 10);
+        this.buku.harga = isNaN(numericValue) ? '' : numericValue;
+      }
+    }
+  },
   methods: {
+    updateHarga() {
+      const numericValue = parseInt(this.formattedHarga.replace(/\./g, ''), 10);
+      this.buku.harga = isNaN(numericValue) ? '' : numericValue;
+    },
     handleclose() {
       this.clearForm();
     },
@@ -134,7 +150,7 @@ export default {
 
         console.log('Upload successful:', response.data);
 
-        this.closeModal();
+        this.showDialog = false,
         this.clearForm();
         this.retrieveBuku();
       } catch (error) {
@@ -233,18 +249,14 @@ export default {
             <div class="card">
               <div class="card-header pb-0 d-flex justify-content-between align-items-center mb-2">
                 <h6 class="mb-0">List Buku Dipinjamkan</h6>
-                <argon-button data-bs-toggle="modal" data-bs-target="#exampleModal"><i
-                    class="fa fa-plus text-white text-sm opacity-10"></i> Pinjamkan Buku</argon-button>
+                <argon-button @click="showDialog = true">
+                  <i class="fa fa-plus text-white text-sm opacity-10"></i> Pinjamkan Buku
+                </argon-button>
               </div>
-              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title text-black" id="userModalLabel">Informasi Buku</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeModal"
-                        @click="handleclose"></button>
-                    </div>
+              <v-dialog v-model="showDialog" max-width="800px">
+                <v-card>
+                  <v-card-title class="text-h5">Informasi Buku</v-card-title>
+                  <v-card-text>
                     <form role="form" @submit.prevent="onSubmit">
                       <div class="modal-body">
                         <div class="row">
@@ -268,6 +280,7 @@ export default {
                               <argon-input type="text" icon="fas fa-search" iconDir="left" placeholder="Cari ISBN Buku"
                                 v-model="buku.ISBN" @input="fetchBookByISBN" />
                             </div>
+                            <v-progress-linear v-if="loadingRegist" indeterminate></v-progress-linear>
                             <div class="row">
                               <a>ISBN Buku</a>
                               <argon-input type="text" placeholder="ISBN Buku" v-model="buku.ISBN"
@@ -301,21 +314,31 @@ export default {
                             </div>
                             <div class="row">
                               <a>Harga Buku</a>
-                              <argon-input type="text" placeholder="Harga Buku" v-model="buku.harga" />
+                              <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">Rp.</span>
+                                <input type="text" class="form-control" v-model="formattedHarga" @input="updateHarga"
+                                  placeholder="Harga" aria-label="phone" aria-describedby="basic-addon1">
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                      <v-progress-linear v-if="loadingRegist" indeterminate></v-progress-linear>
+
                       <!-- <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                           @click="handleclose">Close</button>
                         <button type="submit" class="btn btn-primary">Save</button>
                       </div> -->
                     </form>
-                  </div>
-                </div>
-              </div>
+                  </v-card-text>
+                  <!-- <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="handleClose">Close</v-btn>
+                    <v-btn color="primary" @click="onSubmit">Upload</v-btn>
+                  </v-card-actions> -->
+                </v-card>
+                <v-progress-linear v-if="loadingRegist" indeterminate></v-progress-linear>
+              </v-dialog>
               <div class="card-body px-0 pt-0 pb-2">
                 <div v-if="loading" class="divider">
                   <v-progress-linear indeterminate></v-progress-linear>
@@ -376,7 +399,7 @@ export default {
                           <span class="text-secondary text-xs font-weight-bold">{{ buku.publisher }}</span>
                         </td>
                         <td class="align-middle text-center">
-                          <v-chip color="green">{{buku.verified}}</v-chip>
+                          <v-chip color="green">{{ buku.verified }}</v-chip>
                         </td>
                         <td class="align-middle text-center">
                           <span class="text-secondary text-xs font-weight-bold">{{ buku.status }}</span>
