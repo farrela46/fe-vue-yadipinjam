@@ -90,7 +90,7 @@ export default {
     },
     async deleteUser(id) {
       try {
-        const response = await axios.delete(`${BASE_URL}/deleteUser/` + id, {
+        const response = await axios.delete(`${BASE_URL}/auth/delete/` + id, {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),
           },
