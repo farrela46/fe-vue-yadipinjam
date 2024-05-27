@@ -62,11 +62,11 @@ export default {
     },
     async onLogout() {
       try {
-        // await axios.delete(`${BASE_URL}/auth/logout`, {}, {
-        //   headers: {
-        //     Authorization: "Bearer " + localStorage.getItem('access_token'),
-        //   }
-        // });
+        await axios.delete(`${BASE_URL}/auth/logout`, {}, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem('access_token'),
+          }
+        });
 
         localStorage.removeItem('access_token');
         this.$router.push('/login');

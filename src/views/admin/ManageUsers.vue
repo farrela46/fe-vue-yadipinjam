@@ -21,16 +21,19 @@ export default {
     return {
       users: [],
       users_edit: [],
+      selectedUser: '',
       register: {
         name: '',
         email: '',
         password: '',
       },
+      books: [],
       loading: false,
       loadingRegist: false,
       dialog: false,
       showModal: false,
       selectedUserId: null,
+      showBookDialog: false
     };
   },
   methods: {
@@ -53,6 +56,21 @@ export default {
         console.error(error);
       } finally {
         this.loading = false;
+      }
+    },
+    async fetchUserBooks(id) {
+      this.showBookDialog = true;
+      this.selectedUser = this.users.find(user => user.id === id).username;
+      try {
+        const token = localStorage.getItem('access_token');
+        const response = await axios.get(`${BASE_URL}/auth/user/book/${id}`, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
+        this.books = response.data.data;
+      } catch (error) {
+        console.error('Error fetching books:', error);
       }
     },
     async onSubmit() {
@@ -187,13 +205,16 @@ export default {
                           No
                         </th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                          Author
+                          Name
                         </th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                           No Telp
                         </th>
-                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        <th class="text-uppercase text-center text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                           Role
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                          Trust Point
                         </th>
                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                           Tanggal Regist
@@ -213,7 +234,7 @@ export default {
                         <td>
                           <div class="d-flex px-2 py-1">
                             <div class="d-flex flex-column justify-content-center">
-                              <h6 class="mb-0 text-sm">{{ user.name }}</h6>
+                              <h6 class="mb-0 text-sm">{{ user.username }}</h6>
                               <p class="text-xs text-secondary mb-0">
                                 {{ user.email }}
                               </p>
@@ -222,20 +243,28 @@ export default {
                         </td>
                         <td>
                           <p class="text-xs font-weight-bold mb-0">+62</p>
-                          <p class="text-xs text-secondary mb-0">{{ user.no_telp }}</p>
+                          <p class="text-xs text-secondary mb-0">{{ user.phone }}</p>
                         </td>
                         <td class="align-middle text-center text-sm">
                           <span class="badge badge-sm bg-gradient-success">{{ user.role }}</span>
                         </td>
                         <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{ user.trust_point }}</span>
+                        </td>
+                        <td class="align-middle text-center">
                           <span class="text-secondary text-xs font-weight-bold">{{ formatDate(user.created_at) }}</span>
                         </td>
                         <td class="align-middle">
-                          <span class="mx-3" style="font-size: 1rem; cursor: pointer;" @click="editUser(user.id)">
+                          <span class="mx-3" style="font-size: 1rem; cursor: pointer;" @click="fetchUserBooks(user.id)">
+                            <span style="color: green;">
+                              <i class="fa fa-book"></i>
+                            </span>
+                          </span>
+                          <!-- <span class="mx-3" style="font-size: 1rem; cursor: pointer;" @click="editUser(user.id)">
                             <span style="color: green;">
                               <i class="fa fa-pencil-square-o"></i>
                             </span>
-                          </span>
+                          </span> -->
                           <span style="font-size: 1rem; cursor: pointer;" @click="openDeleteConfirmation(user.id)">
                             <span style="color: red;">
                               <i class="fa fa-trash"></i>
@@ -291,6 +320,65 @@ export default {
             </div>
           </div>
         </div>
+        <v-dialog v-model="showBookDialog" max-width="800px">
+          <v-card>
+            <v-card-title class="text-h5">List Buku Dipinjamkan oleh {{ selectedUser }}</v-card-title>
+            <v-card-text>
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-center text-secondary text-xxs font-weight-bolder opacity-7">
+                        No
+                      </th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Title
+                      </th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Penerbit
+                      </th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                        Tahun Terbit
+                      </th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, index) in books" :key="index">
+                      <td>
+                        <div class="px-2 py-1">
+                          <div class="d-flex justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ index + 1 }}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{ item.title }}</h6>
+                            <p class="text-xs text-secondary mb-0">
+                              {{ item.books_ISBN }}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">{{ item.publisher }}</span>
+                      </td>
+                      <td class="align-middle text-center">
+                        <span class="text-secondary text-xs font-weight-bold">{{ item.year }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="showBookDialog = false">Close</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <div class="row mt-2">
           <argon-pagination>
             <argon-pagination-item prev />
