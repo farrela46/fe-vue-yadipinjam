@@ -7,11 +7,14 @@ import RTL from "../views/Rtl.vue";
 import Profile from "../views/Profile.vue";
 import Signup from "../views/Signup.vue";
 import LandingPage from "../views/LandingPage.vue";
+import Login from "../views/Loginn.vue";
+import Signin from "../views/Signin.vue";
+
+//ADMIN
 import AdminDashboard from "../views/admin/Dashboard.vue";
 import ManageVerifikasi from "../views/admin/ManageVerifikasi.vue";
 import ManageUsers from "../views/admin/ManageUsers.vue";
-import Login from "../views/Loginn.vue";
-import Signin from "../views/Signin.vue";
+import AdminProfile from "../views/admin/Profile.vue";
 
 //USER
 import UserDashboard from "../views/user/Dashboard.vue";
@@ -73,6 +76,11 @@ const routes = [
     name: "Status",
     component: Status,
   },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: Profile,
+  },
 
   //ADMIN
   {
@@ -90,6 +98,13 @@ const routes = [
     name: "Manage Users",
     component: ManageUsers,
   },
+  {
+    path: "/admin/profile",
+    name: "Admin Profile",
+    component: AdminProfile,
+  },
+
+
   {
     path: "/dashboard-default",
     name: "Dashboard",
@@ -115,11 +130,7 @@ const routes = [
     name: "RTL",
     component: RTL,
   },
-  {
-    path: "/profile",
-    name: "Profile",
-    component: Profile,
-  },
+  
   {
     path: "/signin",
     name: "Signin",

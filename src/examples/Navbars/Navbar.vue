@@ -62,11 +62,11 @@ export default {
     },
     async onLogout() {
       try {
-        await axios.delete(`${BASE_URL}/auth/logout`, {}, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem('access_token'),
-          }
-        });
+        // await axios.delete(`${BASE_URL}/auth/logout`, {}, {
+        //   headers: {
+        //     Authorization: "Bearer " + localStorage.getItem('access_token'),
+        //   }
+        // });
 
         localStorage.removeItem('access_token');
         this.$router.push('/login');
@@ -104,8 +104,26 @@ export default {
           </a>
           <ul class="px-2 py-3 dropdown-menu dropdown-menu-end me-sm-n4" :class="showMenu ? 'show' : ''"
             aria-labelledby="dropdownMenuButton">
-            <li class="mb-2">
+            <li class="mb-2" v-if="userRole === 'user'">
               <a class="dropdown-item border-radius-md" href="/profile">
+                <div class="py-1 d-flex">
+                  <div class="my-auto mx-3">
+                    <span style="font-size: 1rem;">
+                      <span style="color: black;">
+                        <i class="fas fa-user"></i>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="d-flex flex-column ml-4 justify-content-center">
+                    <h6 class="mb-1 text-sm font-weight-normal">
+                      My Profile
+                    </h6>
+                  </div>
+                </div>
+              </a>
+            </li>
+            <li class="mb-2" v-if="userRole === 'admin'">
+              <a class="dropdown-item border-radius-md" href="/admin/profile">
                 <div class="py-1 d-flex">
                   <div class="my-auto mx-3">
                     <span style="font-size: 1rem;">
