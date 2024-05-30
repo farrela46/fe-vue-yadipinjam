@@ -36,6 +36,11 @@ export default {
       showModal: false,
       selectedUserId: null,
       activeTab: 'Semua',
+      showReturnDialog: false,
+      star: 0,
+      feedback: '',
+      currentBookId: null,
+      selectedBook: {}
     };
   },
   computed: {
@@ -84,49 +89,43 @@ export default {
       this.activeTab = tab;
       this.getStatus(tab === 'Semua' ? '' : tab.toLowerCase());
     },
-    async onSubmit() {
-      try {
-        this.loadingRegist = true;
-        const year = this.extractYear(this.buku.tahun_terbit);
-
-        const formData = new FormData();
-        formData.append('ISBN', this.buku.ISBN);
-        formData.append('authors', this.buku.penulis);
-        formData.append('publisher', this.buku.penerbit);
-        formData.append('title', this.buku.judul);
-        formData.append('description', this.buku.deskripsi);
-        formData.append('price', this.buku.harga);
-        formData.append('year', year);
-
-        this.selectedFiles.forEach((file, index) => {
-          formData.append('image', file);
-          index;
-        });
-
-        console.log('FormData before sending:', formData);
-
-        const response = await axios.post(`${BASE_URL}/book/upload`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-          },
-        });
-
-        console.log('Upload successful:', response.data);
-
-        this.closeModal();
-        this.clearForm();
-        this.retrieveBuku();
-      } catch (error) {
-        console.error('Error uploading book:', error);
-      } finally {
-        this.loadingRegist = false;
-      }
-    },
-
     handleFileChange(event) {
       const fileInput = event.target;
       this.selectedFiles = Array.from(fileInput.files);
+    },
+    async openReturnDialog(book) {
+      this.selectedBook = book;
+      this.showReturnDialog = true;
+    },
+    async submitReview() {
+      try {
+        const token = localStorage.getItem('access_token');
+
+        await axios.post(`${BASE_URL}/review/owner`, {
+          star: this.star,
+          feedback: this.feedback,
+          to: this.selectedBook.ID_user
+        }, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
+
+        await axios.post(`${BASE_URL}/rent/return`, {
+          rent_ID: this.selectedBook.id
+        }, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
+        this.showReturnDialog = false;
+        this.star = 0;
+        this.feedback = '';
+        this.selectedBook = {};
+        this.getStatus('');
+      } catch (error) {
+        console.error('Error submitting review or returning book:', error);
+      }
     },
     async returned(id) {
       try {
@@ -145,14 +144,7 @@ export default {
           text: 'Request pengembalian terkirim!',
           color: 'green'
         });
-        this.retrieveBuku();
         console.log(response);
-        this.$notify({
-          type: 'success',
-          title: 'Success',
-          text: 'Buku dipinjamkan!',
-          color: 'green'
-        });
         this.getStatus('');
       } catch (error) {
         console.error(error);
@@ -305,7 +297,7 @@ export default {
                         <v-tooltip text="Kembalikan Buku" location="top">
                           <template v-slot:activator="{ props }">
                             <span v-bind="props" v-if="status.status === 'confirmed'" class="mx-2"
-                              style="font-size: 1rem; cursor: pointer;" @click="returned(status.id)">
+                              style="font-size: 1rem; cursor: pointer;" @click="openReturnDialog(status)">
                               <span style="color: green;">
                                 <i class="fas fa-undo-alt"></i>
                               </span>
@@ -320,24 +312,31 @@ export default {
             </div>
           </div>
         </div>
-        <div class="modal fade" id="deleteConfirmationModal" tabindex="-1"
-          aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title text-black" id="deleteConfirmationModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <v-dialog v-model="showReturnDialog" max-width="600px">
+          <v-card>
+            <v-card-title class="text-h5">Review Buku yang Dipinjam</v-card-title>
+            <v-card-text>
+              <div>Judul Buku: {{ selectedBook.title }}</div>
+              <div>ISBN: {{ selectedBook.ISBN }}</div>
+              <div>Pemilik Buku: {{ selectedBook.username }}</div>
+              <div class="text-center">
+                <v-rating v-model="star" active-color="blue" color="orange-lighten-1"></v-rating>
               </div>
-              <div class="modal-body">
-                Are you sure you want to delete this user?
+              <div class="row">
+                <div class="form-floating">
+                  <textarea class="form-control" v-model="feedback" placeholder="Berikan Feedback"
+                    id="floatingTextarea2" style="height: 300px"></textarea>
+                  <label for="floatingTextarea2">Berikan Feedback</label>
+                </div>
               </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" @click="confirmDelete">Delete</button>
-              </div>
-            </div>
-          </div>
-        </div>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="showReturnDialog = false">Cancel</v-btn>
+              <v-btn color="primary" @click="submitReview">Review</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
 
         <div class="row mt-2">
           <argon-pagination>

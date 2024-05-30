@@ -37,6 +37,10 @@ export default {
       dialog: false,
       showModal: false,
       selectedUserId: null,
+      showConfirmReturnDialog: false,
+      star: 0,
+      feedback: '',
+      selectedBook: {}
     };
   },
   methods: {
@@ -52,6 +56,42 @@ export default {
     },
     formatDate(data_date) {
       return moment.utc(data_date).format('YYYY-MM-DD')
+    },
+    async openConfirmReturnDialog(book) {
+      this.selectedBook = book;
+      this.showConfirmReturnDialog = true;
+    },
+    async submitReturnConfirmation() {
+      try {
+        const token = localStorage.getItem('access_token');
+
+        await axios.post(`${BASE_URL}/review/renter`, {
+          star: this.star,
+          feedback: this.feedback,
+          to: this.selectedBook.id_peminjam
+        }, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
+
+        await axios.post(`${BASE_URL}/rent/confirmReturn`, {
+          rent_ID: this.selectedBook.id
+        }, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
+
+        this.showConfirmReturnDialog = false;
+        this.star = 0;
+        this.feedback = '';
+        this.selectedBook = {};
+
+        this.retrieveBuku(); // Assuming getBooks is a method to refresh the list
+      } catch (error) {
+        console.error('Error submitting review or returning book:', error);
+      }
     },
     async retrieveBuku() {
       this.loading = true;
@@ -314,7 +354,7 @@ export default {
                             <v-tooltip text="Konfirmasi Pengembalian" location="top">
                               <template v-slot:activator="{ props }">
                                 <span class="mx-2" v-bind="props" style="font-size: 1rem; cursor: pointer;"
-                                  @click="confirmReturn(buku.id)">
+                                  @click="openConfirmReturnDialog(buku)">
                                   <span style="color: blue;">
                                     <i class="fas fa-check-circle"></i>
                                   </span>
@@ -331,47 +371,31 @@ export default {
             </div>
           </div>
         </div>
-        <div class="modal fade" id="deleteConfirmationModal" tabindex="-1"
-          aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title text-black" id="deleteConfirmationModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <v-dialog v-model="showConfirmReturnDialog" max-width="600px">
+          <v-card>
+            <v-card-title class="text-h5">Review Peminjam</v-card-title>
+            <v-card-text>
+
+              <div>Peminjam Buku: {{ selectedBook.peminjam }}</div>
+              <div class="text-center">
+                <v-rating v-model="star" active-color="blue" color="orange-lighten-1"></v-rating>
               </div>
-              <div class="modal-body">
-                Are you sure you want to delete this user?
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" @click="confirmDelete">Delete</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title text-black" id="userModalLabel">Edit User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                  id="closeModal"></button>
-              </div>
-              <form role="form" @submit.prevent="userUpdate">
-                <div class="modal-body">
-                  <argon-input type="text" placeholder="Name" v-model="users_edit.name" />
-                  <argon-input type="email" placeholder="Email" v-model="users_edit.email" />
-                  <argon-input type="password" placeholder="Password" v-model="users_edit.password" />
+              <div class="row">
+                <div class="form-floating">
+                  <textarea class="form-control" v-model="feedback" placeholder="Berikan Feedback Peminjam"
+                    id="floatingTextarea2" style="height: 300px"></textarea>
+                  <label for="floatingTextarea2">Berikan Feedback Peminjam</label>
                 </div>
-                <v-progress-linear v-if="loadingRegist" indeterminate></v-progress-linear>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+              </div>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="showConfirmReturnDialog = false">Cancel</v-btn>
+              <v-btn color="primary" @click="submitReturnConfirmation">Review</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
         <div class="row mt-2">
           <argon-pagination>
             <argon-pagination-item prev />

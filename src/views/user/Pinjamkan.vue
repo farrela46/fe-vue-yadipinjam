@@ -267,7 +267,7 @@ export default {
                             <div class="row">
                               <div class="col">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                  @click="handleclose">Close</button>
+                                  @click="showDialog = false">Close</button>
                               </div>
                               <div class="col">
                                 <button type="submit" class="btn btn-primary">Upload</button>
