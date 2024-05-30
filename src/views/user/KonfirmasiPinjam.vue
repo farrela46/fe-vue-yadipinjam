@@ -4,7 +4,7 @@ import BASE_URL from '@/api/config-api';
 import ArgonPagination from "@/components/ArgonPagination.vue";
 import ArgonPaginationItem from "@/components/ArgonPaginationItem.vue";
 // import ArgonButton from "@/components/ArgonButton.vue";
-import ArgonInput from "@/components/ArgonInput.vue";
+// import ArgonInput from "@/components/ArgonInput.vue";
 import moment from 'moment';
 import * as bootstrap from 'bootstrap';
 
@@ -15,7 +15,7 @@ export default {
     ArgonPagination,
     ArgonPaginationItem,
     // ArgonButton,
-    ArgonInput
+    // ArgonInput
   },
   data() {
     return {
