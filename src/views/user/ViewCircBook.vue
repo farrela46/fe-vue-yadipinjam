@@ -76,14 +76,14 @@ export default {
                   <img alt="Book Image" :src="getImageLink(item.imagelink)" class="img-fluid">
                 </div>
               </div>
-              <div class="sideicons">
+              <!-- <div class="sideicons">
                 <button class="sideicons-btn">
                   <v-icon icon="mdi-heart"></v-icon>
                 </button>
                 <button class="sideicons-btn" @click.prevent="addCart(item.id)">
                   <v-icon icon="mdi-cart-plus"></v-icon>
                 </button>
-              </div>
+              </div> -->
             </div>
             <div class="product-info p-2">
               <h6 class="text-muted text-light"><a href="#">{{ item.ISBN }}</a></h6>

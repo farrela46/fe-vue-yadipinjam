@@ -21,6 +21,22 @@ export default {
         username: '',
         email: ''
       },
+      review: [
+        {
+          id: 1,
+          nama: 'Saleh Von Forst',
+          star: 3,
+          date: '15 Hours Ago',
+          text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis rem dolorem necessitatibus omnis quasi fugit dolore aspernatur, rerum voluptates voluptatem deleniti consequatur soluta veritatis excepturi quia in temporibus odio eum. Labore aspernatur, id asperiores veritatis a adipisci voluptate voluptas, quibusdam aperiam, tempora incidunt dolore! Voluptate sequi iste totam modi animi.'
+        },
+        {
+          id: 2,
+          nama: 'Dummy Budi',
+          star: 2,
+          date: '15 Hours Ago',
+          text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis rem dolorem necessitatibus omnis quasi fugit dolore aspernatur, rerum voluptates voluptatem deleniti consequatur soluta veritatis excepturi quia in temporibus odio eum. Labore aspernatur, id asperiores veritatis a adipisci voluptate voluptas, quibusdam aperiam, tempora incidunt dolore! Voluptate sequi iste totam modi animi.'
+        },
+      ],
     };
   },
   mounted() {
@@ -181,6 +197,43 @@ export default {
                   <argon-button color="success" size="sm" class="ms-auto" @click="updateUser">Update</argon-button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header pb-0">
+              <div class="d-flex align-items-center">
+                <p class="mb-0">Review dari Peminjam</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div v-for="item in review" :key="item.id" style="color: black">
+                  <div class="row mt-2">
+                    <div class="col-12">
+                      <div class="card px-4">
+                        <div class="row">
+                          <div class="d-flex align-items-center mt-2">
+                            <div class="avatar avatar-sm position-relative me-2">
+                              <img :src="require('@/assets/img/team-1.jpg')" alt="profile_image"
+                                class="shadow-sm w-100 border-radius-lg" />
+                            </div>
+                            <div class="mt-2">
+                              <a class="text-black">{{ item.nama }}</a>
+                              <a class="ms-3 text-black" style="font-size: 12px;">{{ item.date }}</a>
+                            </div>
+                          </div>
+                          <v-rating readonly v-model="item.star" active-color="blue" color="orange-lighten-1"></v-rating>
+                          <div class="row mt-2">
+                            <p class="text-black">{{ item.text }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
             </div>
           </div>
         </div>
