@@ -106,7 +106,7 @@ export default {
         await axios.post(`${BASE_URL}/review/book`, {
           star: this.star,
           review: this.feedback,
-          circulated_ID: this.selectedBook.ID_user
+          circulated_ID: this.selectedBook.circulated_ID
         }, {
           headers: {
             Authorization: 'Bearer ' + token

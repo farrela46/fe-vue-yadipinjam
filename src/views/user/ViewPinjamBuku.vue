@@ -2,6 +2,7 @@
 import axios from "axios";
 import BASE_URL from '@/api/config-api';
 import ArgonAlert from "@/components/ArgonAlert.vue";
+import moment from 'moment';
 
 export default {
   components: {
@@ -12,30 +13,20 @@ export default {
       products: [],
       showAlert: false,
       review: [
-        {
-          id: 1,
-          nama: 'Saleh Von Forst',
-          star: 3,
-          date: '15 Hours Ago',
-          text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis rem dolorem necessitatibus omnis quasi fugit dolore aspernatur, rerum voluptates voluptatem deleniti consequatur soluta veritatis excepturi quia in temporibus odio eum. Labore aspernatur, id asperiores veritatis a adipisci voluptate voluptas, quibusdam aperiam, tempora incidunt dolore! Voluptate sequi iste totam modi animi.'
-        },
-        {
-          id: 2,
-          nama: 'Dummy Budi',
-          star: 2,
-          date: '15 Hours Ago',
-          text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis rem dolorem necessitatibus omnis quasi fugit dolore aspernatur, rerum voluptates voluptatem deleniti consequatur soluta veritatis excepturi quia in temporibus odio eum. Labore aspernatur, id asperiores veritatis a adipisci voluptate voluptas, quibusdam aperiam, tempora incidunt dolore! Voluptate sequi iste totam modi animi.'
-        },
       ],
     };
   },
   mounted() {
     this.retrieveBuku();
+    this.retrieveReview();
   },
   methods: {
     formatPrice(price) {
       const numericPrice = parseFloat(price);
       return numericPrice.toLocaleString('id-ID');
+    },
+    formatDate(data_date) {
+      return moment.utc(data_date).format('YYYY-MM-DD')
     },
     async pinjam(id) {
       try {
@@ -89,6 +80,25 @@ export default {
         this.loadingAPI = false;
       }
     },
+    async retrieveReview() {
+      this.loadingAPI = true;
+      try {
+        const id = this.$route.params.id;
+
+        const response = await axios.get(`${BASE_URL}/review/get/book/` + id, {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: 'Bearer ' + localStorage.getItem('access_token')
+          }
+        });
+
+        this.review = response.data.data;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.loadingAPI = false;
+      }
+    },
   },
 };
 </script>
@@ -119,7 +129,7 @@ export default {
               <hr>
               <h5>Deskripsi</h5>
               <div class="brief-description">
-                {{ products.description }}gi
+                {{ products.description }}
               </div>
               <br>
               <hr>
@@ -161,13 +171,13 @@ export default {
                         <div class="row">
                           <div class="d-flex align-items-center mt-2">
                             <div class="mt-2">
-                              <a class="text-black"><strong>{{ item.nama }}</strong></a>
-                              <a class="ms-3 text-black" style="font-size: 12px;">{{ item.date }}</a>
+                              <a class="text-black"><strong>{{ item.reviewer }}</strong></a>
+                              <a class="ms-3 text-black" style="font-size: 12px;">{{ formatDate(item.created_at) }}</a>
                             </div>
                           </div>
                           <v-rating readonly v-model="item.star" active-color="blue" color="orange-lighten-1"></v-rating>
                           <div class="row mt-2">
-                            <p class="text-black">{{ item.text }}</p>
+                            <p class="text-black">{{ item.feedback }}</p>
                           </div>
                         </div>
                       </div>
