@@ -3,7 +3,7 @@ import axios from "axios";
 import BASE_URL from '@/api/config-api';
 import ArgonPagination from "@/components/ArgonPagination.vue";
 import ArgonPaginationItem from "@/components/ArgonPaginationItem.vue";
-// import ArgonButton from "@/components/ArgonButton.vue";
+import ArgonButton from "@/components/ArgonButton.vue";
 // import ArgonInput from "@/components/ArgonInput.vue";
 import moment from 'moment';
 
@@ -14,7 +14,7 @@ export default {
   components: {
     ArgonPagination,
     ArgonPaginationItem,
-    // ArgonButton,
+    ArgonButton,
     // ArgonInput
   },
   data() {
@@ -42,7 +42,9 @@ export default {
       starPemilik: '',
       feedbackpemilik: '',
       currentBookId: null,
-      selectedBook: {}
+      selectedBook: {},
+      showTolakDialog: false,
+      selectedRent: {}
     };
   },
   computed: {
@@ -97,7 +99,11 @@ export default {
     },
     async openReturnDialog(book) {
       this.selectedBook = book;
-      this.showReturnDialog = true;
+      this.showTolakDialog = true;
+    },
+    async openTolakDialog(book) {
+      this.selectedRent = book;
+      this.showTolakDialog = true;
     },
     async submitReview() {
       try {
@@ -320,6 +326,7 @@ export default {
                             </span>
                           </template>
                         </v-tooltip>
+                        <argon-button v-if="status.status === 'rejected'" color="success" size="sm" class="ms-auto" @click="openTolakDialog(status)">Lihat Alasan</argon-button>
                       </td>
                     </tr>
                   </tbody>
@@ -328,6 +335,25 @@ export default {
             </div>
           </div>
         </div>
+        <v-dialog v-model="showTolakDialog" max-width="600px">
+          <v-card>
+            <v-card-title class="text-h5">Alasan Penolakan</v-card-title>
+            <v-card-text>
+              <div>Judul Buku: {{ selectedRent.title }}</div>
+              <div class="row">
+                <div class="form-floating">
+                  <textarea disabled class="form-control" v-model="selectedRent.notes" placeholder="Berikan Feedback"
+                    id="floatingTextarea2" style="height: 100px"></textarea>
+                  <label for="floatingTextarea2">Feedback Dari Pemilik Buku</label>
+                </div>
+              </div>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="showTolakDialog = false">Cancel</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <v-dialog v-model="showReturnDialog" max-width="600px">
           <v-card>
             <v-card-title class="text-h5">Review Buku</v-card-title>

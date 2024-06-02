@@ -6,6 +6,7 @@ import setTooltip from '@/assets/js/tooltip.js';
 // import ArgonButton from '@/components/ArgonButton.vue';
 import axios from 'axios';
 import BASE_URL from '@/api/config-api';
+import moment from 'moment';
 
 export default {
   name: 'Profile',
@@ -21,6 +22,7 @@ export default {
         username: '',
         email: ''
       },
+      reviews: [],
       review: [
         {
           id: 1,
@@ -48,6 +50,7 @@ export default {
     setNavPills();
     setTooltip();
     this.getUser();
+    this.getReview();
   },
   beforeUnmount() {
     this.store.state.isAbsolute = false;
@@ -58,6 +61,9 @@ export default {
     this.body.classList.remove('profile-overview');
   },
   methods: {
+    formatDate(data_date) {
+      return moment.utc(data_date).format('DD-MM-YYYY')
+    },
     setupPage() {
       this.store.state.imageLayout = 'profile-overview';
       this.store.state.showNavbar = false;
@@ -75,7 +81,7 @@ export default {
     },
     async getUser() {
       try {
-        const response = await axios.get(`${BASE_URL}/review/get/owner/` + this.$route.params.id, {
+        const response = await axios.get(`${BASE_URL}/auth/user-id/` + this.$route.params.id, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem('access_token')
           }
@@ -90,40 +96,25 @@ export default {
         }
       }
     },
-    async updateUser() {
+
+    async getReview() {
       try {
-        const response = await axios.put(`${BASE_URL}/auth/users/update`, this.users, {
+        const response = await axios.get(`${BASE_URL}/review/get/owner/` + this.$route.params.id, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem('access_token')
           }
         });
-        this.users.password = null,
-          console.log(response.data.message);
-        this.$notify({
-          type: 'success',
-          title: 'Success',
-          text: 'Successfully Updated!',
-          color: 'green'
-        });
+        this.reviews = response.data.data
       } catch (error) {
         console.error(error);
+
         if (error.response && error.response.data.message) {
           const errorMessage = error.response.data.message;
-          console.log(errorMessage);
-          
+          console.log(errorMessage)
         }
       }
     },
-    async onLogout() {
-      try {
-        await axios.delete(`${BASE_URL}/auth/logout`,);
-
-        localStorage.removeItem('access_token');
-        this.$router.push('/login');
-      } catch (error) {
-        console.error('Logout failed:', error);
-      }
-    }
+    
   },
 };
 </script>
@@ -148,8 +139,8 @@ export default {
             </div>
             <div class="col-auto my-auto">
               <div class="h-100">
-                <h5 class="mb-1">Andi</h5>
-                <p class="mb-0 font-weight-bold text-sm">Bergabung Sejak:  20-04-2024</p>
+                <h5 class="mb-1">{{ users.username }}</h5>
+                <p class="mb-0 font-weight-bold text-sm">Bergabung Sejak:  {{ formatDate(users.since) }}</p>
               </div>
             </div>
             
@@ -163,31 +154,24 @@ export default {
           <div class="card">
             <div class="card-header pb-0">
               <div class="d-flex align-items-center">
-                <p class="mb-0">Review dari Peminjam</p>
+                <h3 class="mb-0">Review dari Peminjam</h3>
               </div>
             </div>
             <div class="card-body">
-              <div v-for="item in review" :key="item.id" style="color: black">
+              <div v-for="item in reviews" :key="item.id" style="color: black">
                   <div class="row mt-2">
                     <div class="col-12">
-                      <div class="card px-4">
+                      <div class="border px-4" style="border-radius: 20px;">
                         <div class="row">
                           <div class="d-flex align-items-center mt-2">
-                            <div class="avatar avatar-sm position-relative me-2">
-                              <img :src="require('@/assets/img/team-1.jpg')" alt="profile_image"
-                                class="shadow-sm w-100 border-radius-lg" />
-                            </div>
                             <div class="mt-2">
-                              <a class="text-black">{{ item.nama }}</a>
-                              <a class="ms-3 text-black" style="font-size: 12px;">{{ item.date }}</a>
+                              <h4 class="text-black badge badge-primary">{{ item.reviewer }}</h4>
+                              <a class="ms-3 text-black" style="font-size: 12px;">{{ formatDate(item.created_at) }}</a>
                             </div>
-                          </div>
-                          <div class="row px-4 text-muted mt-2">
-                            Judul Buku: {{ item.title }}
                           </div>
                           <v-rating readonly v-model="item.star" active-color="blue" color="orange-lighten-1"></v-rating>
                           <div class="row mt-2">
-                            <p class="text-black">{{ item.text }}</p>
+                            <p class="text-black ms-2">{{ item.feedback }}</p>
                           </div>
                         </div>
                       </div>
