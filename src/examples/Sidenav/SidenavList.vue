@@ -103,7 +103,7 @@ export default {
         </sidenav-item>
       </li>
       <li v-if="userRole === 'user'" class="nav-item">
-        <sidenav-item to="/status" :class="getRoute() === 'Status' ? 'active' : ''" navText="Status">
+        <sidenav-item to="/status" :class="getRoute() === 'Status' ? 'active' : ''" navText="Status Pinjam">
           <template v-slot:icon>
             <i class="fas fa-info text-info text-sm opacity-10"></i>
           </template>

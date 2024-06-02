@@ -119,15 +119,12 @@ export default {
               <hr>
               <h5>Deskripsi</h5>
               <div class="brief-description">
-                {{ products.description }}
+                {{ products.description }}gi
               </div>
               <br>
               <hr>
               <div class="mt-auto pb-2">
-                <!-- <a>Tags:</a>
-                <p>Tag</p>
-                <a>Category &nbsp;: </a>
-                <br> -->
+               
 
                 <h5>Detail</h5>
                 <a>No ISBN:</a>
