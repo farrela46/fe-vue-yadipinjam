@@ -111,8 +111,9 @@ export default {
               </div>
               <div class="theme-text subtitle">Uploader:</div>
               <div class="brief-description">
+                <router-link :to="'/profile/' + products.uploader_id">
+                <i class="fas fa-user fa-md"></i>
                 {{ products.uploader_name }}
-                <router-link :to="'/pinjam/' + this.$route.params.isbn + '/'+ products.uploader_id">
                 </router-link>
               </div>
               <hr>

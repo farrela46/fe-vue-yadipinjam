@@ -5,6 +5,7 @@ import Billing from "../views/Billing.vue";
 import VirtualReality from "../views/VirtualReality.vue";
 import RTL from "../views/Rtl.vue";
 import Profile from "../views/Profile.vue";
+import OwnerProfile from "../views/OwnerProfile.vue";
 import Signup from "../views/Signup.vue";
 import LandingPage from "../views/LandingPage.vue";
 import Login from "../views/Loginn.vue";
@@ -75,6 +76,11 @@ const routes = [
     path: "/status",
     name: "Status",
     component: Status,
+  },
+  {
+    path: "/profile/:id",
+    name: "Profile Pemilik",
+    component: OwnerProfile,
   },
   {
     path: "/profile",
