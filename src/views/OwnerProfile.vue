@@ -2,16 +2,16 @@
 import { useStore } from 'vuex';
 import setNavPills from '@/assets/js/nav-pills.js';
 import setTooltip from '@/assets/js/tooltip.js';
-import ArgonInput from '@/components/ArgonInput.vue';
-import ArgonButton from '@/components/ArgonButton.vue';
+// import ArgonInput from '@/components/ArgonInput.vue';
+// import ArgonButton from '@/components/ArgonButton.vue';
 import axios from 'axios';
 import BASE_URL from '@/api/config-api';
 
 export default {
   name: 'Profile',
   components: {
-    ArgonInput,
-    ArgonButton,
+    // ArgonInput,
+    // ArgonButton,
   },
   data() {
     return {
@@ -25,6 +25,7 @@ export default {
         {
           id: 1,
           nama: 'Saleh Von Forst',
+          title: 'Mencuri Abang Saleh',
           star: 3,
           date: '15 Hours Ago',
           text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis rem dolorem necessitatibus omnis quasi fugit dolore aspernatur, rerum voluptates voluptatem deleniti consequatur soluta veritatis excepturi quia in temporibus odio eum. Labore aspernatur, id asperiores veritatis a adipisci voluptate voluptas, quibusdam aperiam, tempora incidunt dolore! Voluptate sequi iste totam modi animi.'
@@ -32,6 +33,7 @@ export default {
         {
           id: 2,
           nama: 'Dummy Budi',
+          title: 'Arya si Boti',
           star: 2,
           date: '15 Hours Ago',
           text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis rem dolorem necessitatibus omnis quasi fugit dolore aspernatur, rerum voluptates voluptatem deleniti consequatur soluta veritatis excepturi quia in temporibus odio eum. Labore aspernatur, id asperiores veritatis a adipisci voluptate voluptas, quibusdam aperiam, tempora incidunt dolore! Voluptate sequi iste totam modi animi.'
@@ -73,7 +75,7 @@ export default {
     },
     async getUser() {
       try {
-        const response = await axios.get(`${BASE_URL}/auth/user`, {
+        const response = await axios.get(`${BASE_URL}/review/get/owner/` + this.$route.params.id, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem('access_token')
           }
@@ -108,7 +110,7 @@ export default {
         if (error.response && error.response.data.message) {
           const errorMessage = error.response.data.message;
           console.log(errorMessage);
-          // Handle error notification if needed
+          
         }
       }
     },
@@ -146,60 +148,16 @@ export default {
             </div>
             <div class="col-auto my-auto">
               <div class="h-100">
-                <h5 class="mb-1">{{ users.username }}</h5>
-                <p class="mb-0 font-weight-bold text-sm">{{ users.role }}</p>
+                <h5 class="mb-1">Andi</h5>
+                <p class="mb-0 font-weight-bold text-sm">Bergabung Sejak:  20-04-2024</p>
               </div>
             </div>
-            <div class="mx-auto mt-3 col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0">
-              <div class="nav-wrapper position-relative end-0">
-                <argon-button color="danger" @click="onLogout"><span class="mx-3"
-                    style="font-size: 1rem; cursor: pointer;">
-                    <span style="color: WHITE;">
-                      <i class="fas fa-running"></i>
-                    </span>
-                  </span>Logout</argon-button>
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>
     </div>
     <div class="py-4 container-fluid">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-header pb-0">
-              <div class="d-flex align-items-center">
-                <p class="mb-0">Edit Profile</p>
-              </div>
-            </div>
-            <div class="card-body">
-              <p class="text-uppercase text-sm">User Information</p>
-              <div class="row">
-                <div class="col-md-6">
-                  <label for="example-text-input" class="form-control-label">Username</label>
-                  <argon-input type="text" v-model="users.username" />
-                </div>
-                <div class="col-md-6">
-                  <label for="example-text-input" class="form-control-label">Email address</label>
-                  <argon-input type="email" v-model="users.email" />
-                </div>
-                <div class="col-md-6">
-                  <label for="example-text-input" class="form-control-label">Phone</label>
-                  <input class="form-control" type="text" v-model="users.phone" />
-                </div>
-                <div class="col-md-6">
-                  <label for="example-text-input" class="form-control-label">Credit Balance</label>
-                  <input class="form-control" type="text" v-model="users.balance" disabled />
-                </div>
-                <div class="col mt-4 d-flex justify-content-end">
-                  <argon-button color="success" size="sm" class="ms-auto" @click="updateUser">Update</argon-button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="row mt-3">
         <div class="col-md-12">
           <div class="card">
@@ -223,6 +181,9 @@ export default {
                               <a class="text-black">{{ item.nama }}</a>
                               <a class="ms-3 text-black" style="font-size: 12px;">{{ item.date }}</a>
                             </div>
+                          </div>
+                          <div class="row px-4 text-muted mt-2">
+                            Judul Buku: {{ item.title }}
                           </div>
                           <v-rating readonly v-model="item.star" active-color="blue" color="orange-lighten-1"></v-rating>
                           <div class="row mt-2">

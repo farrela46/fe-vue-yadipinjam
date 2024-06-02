@@ -40,7 +40,10 @@ export default {
       showConfirmReturnDialog: false,
       star: 0,
       feedback: '',
-      selectedBook: {}
+      selectedBook: {},
+      showTolakDialog: false,
+      notes:'',
+      selectedRent: {}
     };
   },
   methods: {
@@ -56,6 +59,33 @@ export default {
     },
     formatDate(data_date) {
       return moment.utc(data_date).format('YYYY-MM-DD')
+    },
+    async openTolakDialog(book) {
+      this.selectedRent = book;
+      this.showTolakDialog = true;
+    },
+    async submitTolak() {
+      try {
+        const token = localStorage.getItem('access_token');
+
+        await axios.post(`${BASE_URL}/rent/reject`, {
+          rent_ID: this.selectedRent.id,
+          notes: this.notes,
+        }, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
+
+      
+        this.showTolakDialog = false;
+        this.notes = '';
+        this.selectedBook = {};
+
+        this.retrieveBuku(); 
+      } catch (error) {
+        console.error('Error submitting review or returning book:', error);
+      }
     },
     async openConfirmReturnDialog(book) {
       this.selectedBook = book;
@@ -88,7 +118,7 @@ export default {
         this.feedback = '';
         this.selectedBook = {};
 
-        this.retrieveBuku(); // Assuming getBooks is a method to refresh the list
+        this.retrieveBuku(); 
       } catch (error) {
         console.error('Error submitting review or returning book:', error);
       }
@@ -349,6 +379,16 @@ export default {
                                 </span>
                               </template>
                             </v-tooltip>
+                            <v-tooltip text="Tolak Pinjam" location="top">
+                              <template v-slot:activator="{ props }">
+                                <span class="mx-2" v-bind="props" style="font-size: 1rem; cursor: pointer;"
+                                @click="openTolakDialog(buku)">
+                                  <span style="color: red;">
+                                    <i class="far fa-times-circle"></i>
+                                  </span>
+                                </span>
+                              </template>
+                            </v-tooltip>
                           </div>
                           <div v-else-if="buku.status === 'returned'">
                             <v-tooltip text="Konfirmasi Pengembalian" location="top">
@@ -371,6 +411,27 @@ export default {
             </div>
           </div>
         </div>
+        <v-dialog v-model="showTolakDialog" max-width="600px">
+          <v-card>
+            <v-card-title class="text-h5">Review Peminjam</v-card-title>
+            <v-card-text>
+
+              <div>Peminjam Buku: {{ selectedRent.peminjam }}</div>
+              <div class="row">
+                <div class="form-floating">
+                  <textarea class="form-control" v-model="notes" placeholder="Berikan Feedback Peminjam"
+                    id="floatingTextarea2" style="height: 300px"></textarea>
+                  <label for="floatingTextarea2">Berikan Alasan Tolak</label>
+                </div>
+              </div>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="showTolakDialog = false">Cancel</v-btn>
+              <v-btn color="primary" @click="submitTolak">Tolak</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <v-dialog v-model="showConfirmReturnDialog" max-width="600px">
           <v-card>
             <v-card-title class="text-h5">Review Peminjam</v-card-title>
