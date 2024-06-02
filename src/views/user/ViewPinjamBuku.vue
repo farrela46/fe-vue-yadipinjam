@@ -10,7 +10,23 @@ export default {
   data() {
     return {
       products: [],
-      showAlert: false
+      showAlert: false,
+      review: [
+        {
+          id: 1,
+          nama: 'Saleh Von Forst',
+          star: 3,
+          date: '15 Hours Ago',
+          text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis rem dolorem necessitatibus omnis quasi fugit dolore aspernatur, rerum voluptates voluptatem deleniti consequatur soluta veritatis excepturi quia in temporibus odio eum. Labore aspernatur, id asperiores veritatis a adipisci voluptate voluptas, quibusdam aperiam, tempora incidunt dolore! Voluptate sequi iste totam modi animi.'
+        },
+        {
+          id: 2,
+          nama: 'Dummy Budi',
+          star: 2,
+          date: '15 Hours Ago',
+          text: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Reiciendis rem dolorem necessitatibus omnis quasi fugit dolore aspernatur, rerum voluptates voluptatem deleniti consequatur soluta veritatis excepturi quia in temporibus odio eum. Labore aspernatur, id asperiores veritatis a adipisci voluptate voluptas, quibusdam aperiam, tempora incidunt dolore! Voluptate sequi iste totam modi animi.'
+        },
+      ],
     };
   },
   mounted() {
@@ -96,6 +112,8 @@ export default {
               <div class="theme-text subtitle">Uploader:</div>
               <div class="brief-description">
                 {{ products.uploader_name }}
+                <router-link :to="'/pinjam/' + this.$route.params.isbn + '/'+ products.uploader_id">
+                </router-link>
               </div>
               <hr>
               <h5>Deskripsi</h5>
@@ -131,6 +149,35 @@ export default {
             </div>
           </div>
         </div>
+        <div class="card mt-2" v-if="!loading">
+            <div class="card-header pb-0">
+              <div class="d-flex align-items-center">
+                <h4 class="mb-0">Review Buku</h4>
+              </div>
+            </div>
+            <div class="card-body">
+              <div v-for="item in review" :key="item.id" style="color: black">
+                  <div class="row mt-2">
+                    <div class="col-12">
+                      <div class="border px-4" style="border-radius: 20px;">
+                        <div class="row">
+                          <div class="d-flex align-items-center mt-2">
+                            <div class="mt-2">
+                              <a class="text-black"><strong>{{ item.nama }}</strong></a>
+                              <a class="ms-3 text-black" style="font-size: 12px;">{{ item.date }}</a>
+                            </div>
+                          </div>
+                          <v-rating readonly v-model="item.star" active-color="blue" color="orange-lighten-1"></v-rating>
+                          <div class="row mt-2">
+                            <p class="text-black">{{ item.text }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
       </div>
     </div>
   </div>

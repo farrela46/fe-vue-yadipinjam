@@ -39,6 +39,8 @@ export default {
       showReturnDialog: false,
       star: 0,
       feedback: '',
+      starPemilik: '',
+      feedbackpemilik: '',
       currentBookId: null,
       selectedBook: {}
     };
@@ -100,16 +102,27 @@ export default {
     async submitReview() {
       try {
         const token = localStorage.getItem('access_token');
+        
+        await axios.post(`${BASE_URL}/review/book`, {
+          star: this.star,
+          review: this.feedback,
+          circulated_ID: this.selectedBook.ID_user
+        }, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
 
         await axios.post(`${BASE_URL}/review/owner`, {
-          star: this.star,
-          feedback: this.feedback,
+          star: this.starPemilik,
+          feedback: this.feedbackPemilik,
           to: this.selectedBook.ID_user
         }, {
           headers: {
             Authorization: 'Bearer ' + token
           }
         });
+
 
         await axios.post(`${BASE_URL}/rent/return`, {
           rent_ID: this.selectedBook.id
@@ -121,6 +134,8 @@ export default {
         this.showReturnDialog = false;
         this.star = 0;
         this.feedback = '';
+        this.starPemilik = 0;
+        this.feedbackPemilik = '';
         this.selectedBook = {};
         this.getStatus('');
       } catch (error) {
@@ -301,6 +316,7 @@ export default {
                               <span style="color: green;">
                                 <i class="fas fa-undo-alt"></i>
                               </span>
+                              Kembalikan
                             </span>
                           </template>
                         </v-tooltip>
@@ -314,7 +330,7 @@ export default {
         </div>
         <v-dialog v-model="showReturnDialog" max-width="600px">
           <v-card>
-            <v-card-title class="text-h5">Review Buku yang Dipinjam</v-card-title>
+            <v-card-title class="text-h5">Review Buku</v-card-title>
             <v-card-text>
               <div>Judul Buku: {{ selectedBook.title }}</div>
               <div>ISBN: {{ selectedBook.ISBN }}</div>
@@ -327,6 +343,20 @@ export default {
                   <textarea class="form-control" v-model="feedback" placeholder="Berikan Feedback"
                     id="floatingTextarea2" style="height: 300px"></textarea>
                   <label for="floatingTextarea2">Berikan Feedback</label>
+                </div>
+              </div>
+              <hr class="horizontal dark">
+              <div class="row">
+                <h5>Review Pemilik Buku</h5>
+              </div>
+              <div class="text-center">
+                <v-rating v-model="starPemilik" active-color="blue" color="orange-lighten-1"></v-rating>
+              </div>
+              <div class="row">
+                <div class="form-floating">
+                  <textarea class="form-control" v-model="feedbackPemilik" placeholder="Berikan Feedback"
+                    id="floatingTextarea2" style="height: 100px"></textarea>
+                  <label for="floatingTextarea2">Berikan Feedback Untuk Pemilik</label>
                 </div>
               </div>
             </v-card-text>
