@@ -6,7 +6,7 @@ import ArgonPaginationItem from "@/components/ArgonPaginationItem.vue";
 // import ArgonButton from "@/components/ArgonButton.vue";
 // import ArgonInput from "@/components/ArgonInput.vue";
 import moment from 'moment';
-import * as bootstrap from 'bootstrap';
+
 
 
 
@@ -102,7 +102,7 @@ export default {
     async submitReview() {
       try {
         const token = localStorage.getItem('access_token');
-        
+
         await axios.post(`${BASE_URL}/review/book`, {
           star: this.star,
           review: this.feedback,
@@ -165,46 +165,31 @@ export default {
         console.error(error);
       }
     },
-    async deleteUser(id) {
+    async confirmRent(id) {
       try {
-        const response = await axios.delete(`${BASE_URL}/deleteUser/` + id, {
+        const formData = new FormData();
+        formData.append('rent_ID', id);
+
+        const response = await axios.post(`${BASE_URL}/rent/confirmRent`, formData, {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+            'Content-Type': 'multipart/form-data',
           },
         });
-        console.log(response)
+        this.getStatus('');
+        console.log(response);
         this.$notify({
           type: 'success',
           title: 'Success',
-          text: 'User berhasil dihapus',
+          text: 'Book has been confirmed in your hand',
           color: 'green'
         });
-        this.getAllUser();
       } catch (error) {
         console.error(error);
       }
     },
-    openDeleteConfirmation(id) {
-      this.selectedUserId = id;
-      let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteConfirmationModal'))
-      modal.show();
-    },
-    confirmDelete() {
-      if (this.selectedUserId) {
-        this.deleteUser(this.selectedUserId);
-        this.closeModalDelete();
-      }
-    },
-    closeModalDelete() {
-      let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteConfirmationModal'))
-      modal.hide();
-    },
-    editUser(id_user) {
-      let obj = this.users.find(o => o.id === id_user);
-      this.users_edit = obj;
-      let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
-      modal.show();
-    },
+
+
   },
   mounted() {
     this.getStatus('');
@@ -233,9 +218,9 @@ export default {
                     @click="toggleTab('Confirmed')">
                     Confirmed
                   </div>
-                  <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Overdue' }"
-                    @click="toggleTab('Overdue')">
-                    Overdue
+                  <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Rented' }"
+                    @click="toggleTab('Rented')">
+                    Rented
                   </div>
                   <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Returned' }"
                     @click="toggleTab('Returned')">
@@ -244,6 +229,10 @@ export default {
                   <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Checking' }"
                     @click="toggleTab('Checking')">
                     Checking
+                  </div>
+                  <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Overdue' }"
+                    @click="toggleTab('Overdue')">
+                    Overdue
                   </div>
                   <div :class="{ 'col': true, 'tablist': true, 'tab-active': activeTab === 'Complete' }"
                     @click="toggleTab('Complete')">
@@ -309,14 +298,25 @@ export default {
                         </span>
                       </td>
                       <td class="align-middle">
-                        <v-tooltip text="Kembalikan Buku" location="top">
+                        <v-tooltip text="Request Kembalikan Buku" location="top">
                           <template v-slot:activator="{ props }">
-                            <span v-bind="props" v-if="status.status === 'confirmed'" class="mx-2"
+                            <span v-bind="props" v-if="status.status === 'rented'" class="mx-2"
                               style="font-size: 1rem; cursor: pointer;" @click="openReturnDialog(status)">
                               <span style="color: green;">
                                 <i class="fas fa-undo-alt"></i>
                               </span>
                               Kembalikan
+                            </span>
+                          </template>
+                        </v-tooltip>
+                        <v-tooltip text="Konfirmasi Buku Diterima" location="top">
+                          <template v-slot:activator="{ props }">
+                            <span v-bind="props" v-if="status.status === 'confirmed'" class="mx-2"
+                              style="font-size: 1rem; cursor: pointer;" @click="confirmRent(status.id)">
+                              <span style="color: green;">
+                                <i class="fas fa-check-circle"></i>
+                              </span>
+                              Buku Diterima
                             </span>
                           </template>
                         </v-tooltip>
