@@ -44,7 +44,8 @@ export default {
       currentBookId: null,
       selectedBook: {},
       showTolakDialog: false,
-      selectedRent: {}
+      selectedRent: {},
+      showCancelDialog: false
     };
   },
   computed: {
@@ -99,11 +100,15 @@ export default {
     },
     async openReturnDialog(book) {
       this.selectedBook = book;
-      this.showTolakDialog = true;
+      this.showReturnDialog = true;
     },
     async openTolakDialog(book) {
       this.selectedRent = book;
       this.showTolakDialog = true;
+    },
+    async openCancelDialog(book) {
+      this.selectedBook = book;
+      this.showCancelDialog = true;
     },
     async submitReview() {
       try {
@@ -146,6 +151,30 @@ export default {
         this.getStatus('');
       } catch (error) {
         console.error('Error submitting review or returning book:', error);
+      }
+    },
+    async cancel() {
+      try {
+        const formData = new FormData();
+        formData.append('rent_ID', this.selectedBook.id);
+
+        const response = await axios.post(`${BASE_URL}/rent/cancel`, formData, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        this.$notify({
+          type: 'success',
+          title: 'Success',
+          text: 'Request berhasil dibatalkan!',
+          color: 'green'
+        });
+        console.log(response);
+        this.openCancelDialog = false,
+        this.getStatus('');
+      } catch (error) {
+        console.error(error);
       }
     },
     async returned(id) {
@@ -326,7 +355,10 @@ export default {
                             </span>
                           </template>
                         </v-tooltip>
-                        <argon-button v-if="status.status === 'rejected'" color="success" size="sm" class="ms-auto" @click="openTolakDialog(status)">Lihat Alasan</argon-button>
+                        <argon-button v-if="status.status === 'pending'" color="danger" size="sm" class="ms-auto"
+                          @click="openCancelDialog(status)">Cancel</argon-button>
+                        <argon-button v-if="status.status === 'rejected'" color="success" size="sm" class="ms-auto"
+                          @click="openTolakDialog(status)">Lihat Alasan</argon-button>
                       </td>
                     </tr>
                   </tbody>
@@ -335,6 +367,19 @@ export default {
             </div>
           </div>
         </div>
+        <v-dialog v-model="showCancelDialog" max-width="600px">
+          <v-card>
+            <v-card-title class="text-h5">Konfirmasi</v-card-title>
+            <v-card-text>
+              <div>Anda Yakin akan meng-cancel peminjaman</div>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="showCancelDialog = false">Cancel</v-btn>
+              <v-btn text @click="cancel">Batalkan Pinjam</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <v-dialog v-model="showTolakDialog" max-width="600px">
           <v-card>
             <v-card-title class="text-h5">Alasan Penolakan</v-card-title>
