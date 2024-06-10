@@ -78,7 +78,7 @@ export default {
       this.loadingRegist = true;
       try {
         const response = await axios.post(`${BASE_URL}/auth/register`, {
-          name: this.register.name,
+          username: this.register.name,
           email: this.register.email,
           phone: this.register.phone,
           password: this.register.password
