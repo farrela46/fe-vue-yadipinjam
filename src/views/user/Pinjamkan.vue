@@ -1,8 +1,8 @@
 <script>
 import axios from "axios";
 import BASE_URL from '@/api/config-api';
-import ArgonPagination from "@/components/ArgonPagination.vue";
-import ArgonPaginationItem from "@/components/ArgonPaginationItem.vue";
+// import ArgonPagination from "@/components/ArgonPagination.vue";
+// import ArgonPaginationItem from "@/components/ArgonPaginationItem.vue";
 import ArgonButton from "@/components/ArgonButton.vue";
 import ArgonInput from "@/components/ArgonInput.vue";
 import moment from 'moment';
@@ -12,8 +12,8 @@ import * as bootstrap from 'bootstrap';
 
 export default {
   components: {
-    ArgonPagination,
-    ArgonPaginationItem,
+    // ArgonPagination,
+    // ArgonPaginationItem,
     ArgonButton,
     ArgonInput
   },
@@ -266,7 +266,7 @@ export default {
                               buku yang kamu upload</p>
                             <div class="row">
                               <div class="col">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                <button type="button" class="btn btn-secondary" 
                                   @click="showDialog = false">Close</button>
                               </div>
                               <div class="col">
@@ -471,7 +471,7 @@ export default {
             </div>
           </div>
         </div>
-        <div class="row mt-2">
+        <!-- <div class="row mt-2">
           <argon-pagination>
             <argon-pagination-item prev />
             <argon-pagination-item label="1" active />
@@ -479,7 +479,7 @@ export default {
             <argon-pagination-item label="3" />
             <argon-pagination-item next />
           </argon-pagination>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
