@@ -1,8 +1,8 @@
 <script>
 import axios from "axios";
 import BASE_URL from '@/api/config-api';
-import ArgonPagination from "@/components/ArgonPagination.vue";
-import ArgonPaginationItem from "@/components/ArgonPaginationItem.vue";
+// import ArgonPagination from "@/components/ArgonPagination.vue";
+// import ArgonPaginationItem from "@/components/ArgonPaginationItem.vue";
 import ArgonButton from "@/components/ArgonButton.vue";
 import ArgonInput from "@/components/ArgonInput.vue";
 import moment from 'moment';
@@ -12,8 +12,8 @@ import * as bootstrap from 'bootstrap';
 
 export default {
   components: {
-    ArgonPagination,
-    ArgonPaginationItem,
+    // ArgonPagination,
+    // ArgonPaginationItem,
     ArgonButton,
     ArgonInput
   },
@@ -25,6 +25,7 @@ export default {
       register: {
         name: '',
         email: '',
+        phone: '',
         password: '',
       },
       books: [],
@@ -79,6 +80,7 @@ export default {
         const response = await axios.post(`${BASE_URL}/register`, {
           name: this.register.name,
           email: this.register.email,
+          phone: this.register.phone,
           password: this.register.password
         });
         this.getAllUser();
@@ -128,6 +130,7 @@ export default {
     clearForm() {
       this.register.name = '';
       this.register.email = '';
+      this.register.phone = '';
       this.register.password = '';
     },
     openDeleteConfirmation(id) {
@@ -182,6 +185,7 @@ export default {
                       <div class="modal-body">
                         <argon-input type="text" placeholder="Name" v-model="register.name" />
                         <argon-input type="email" placeholder="Email" v-model="register.email" />
+                        <argon-input type="number" placeholder="Phone Number" v-model="register.phone" />
                         <argon-input type="password" placeholder="Password" v-model="register.password" />
                       </div>
                       <v-progress-linear v-if="loadingRegist" indeterminate></v-progress-linear>
@@ -379,7 +383,7 @@ export default {
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <div class="row mt-2">
+        <!-- <div class="row mt-2">
           <argon-pagination>
             <argon-pagination-item prev />
             <argon-pagination-item label="1" active />
@@ -387,7 +391,7 @@ export default {
             <argon-pagination-item label="3" />
             <argon-pagination-item next />
           </argon-pagination>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
