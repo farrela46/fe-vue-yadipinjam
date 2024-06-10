@@ -77,7 +77,7 @@ export default {
     async onSubmit() {
       this.loadingRegist = true;
       try {
-        const response = await axios.post(`${BASE_URL}/register`, {
+        const response = await axios.post(`${BASE_URL}/auth/register`, {
           name: this.register.name,
           email: this.register.email,
           phone: this.register.phone,
