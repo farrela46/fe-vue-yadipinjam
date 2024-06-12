@@ -171,7 +171,7 @@ export default {
           color: 'green'
         });
         console.log(response);
-        this.openCancelDialog = false,
+        this.showCancelDialog = false,
         this.getStatus('');
       } catch (error) {
         console.error(error);
